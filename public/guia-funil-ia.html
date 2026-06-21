@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia: 5 Etapas para Implementar Funil com IA e Vender Mais</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #fff;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      padding-bottom: 30px;
+      border-bottom: 3px solid #3b82f6;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1e40af;
+    }
+    .header p {
+      font-size: 16px;
+      color: #666;
+    }
+    .intro {
+      background: #f0f9ff;
+      border-left: 4px solid #3b82f6;
+      padding: 20px;
+      margin-bottom: 40px;
+      border-radius: 4px;
+    }
+    .intro p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #0c4a6e;
+    }
+    .stage {
+      margin-bottom: 50px;
+      page-break-inside: avoid;
+    }
+    .stage-number {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      background: #3b82f6;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 50px;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .stage h2 {
+      font-size: 22px;
+      color: #1e40af;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .stage-desc {
+      background: #fafafa;
+      padding: 16px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      border-left: 3px solid #10b981;
+    }
+    .stage-desc p {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    .stage-desc p:last-child {
+      margin-bottom: 0;
+    }
+    .highlight {
+      background: #fef08a;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 30px 0;
+      border-left: 4px solid #f59e0b;
+    }
+    .highlight h3 {
+      font-size: 18px;
+      color: #92400e;
+      margin-bottom: 12px;
+    }
+    .highlight p {
+      font-size: 14px;
+      color: #78350f;
+      line-height: 1.8;
+    }
+    .impact {
+      background: #dcfce7;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 20px 0;
+      border-left: 4px solid #16a34a;
+    }
+    .impact h4 {
+      color: #166534;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+    .impact ul {
+      list-style: none;
+      margin-left: 0;
+    }
+    .impact li {
+      color: #166534;
+      font-size: 14px;
+      margin-bottom: 6px;
+      padding-left: 20px;
+      position: relative;
+    }
+    .impact li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+    .mql-box {
+      background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 8px;
+      margin: 40px 0;
+      page-break-inside: avoid;
+    }
+    .mql-box h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .mql-box p {
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .mql-box p:last-child {
+      margin-bottom: 0;
+    }
+    .cta {
+      background: #1e40af;
+      color: white;
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 50px;
+      page-break-inside: avoid;
+    }
+    .cta h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .cta p {
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: #10b981;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      color: #666;
+      font-size: 12px;
+    }
+    @media print {
+      body { background: white; }
+      .container { padding: 20px; }
+      .cta-button { border: 1px solid #333; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>5 Etapas para Implementar Funil com IA e Vender Mais</h1>
+      <p>Reduz curiosos. Atrai leads qualificados. Aumenta conversão.</p>
+    </div>
+
+    <!-- Intro -->
+    <div class="intro">
+      <p>
+        A maioria dos negócios está jogando dinheiro fora em anúncios. Trazem centenas de curiosos, mas poucos leads reais.
+        <strong>A solução?</strong> Um funil que usa IA para qualificar leads automaticamente e enviar apenas os melhores para o Meta
+        — deixando sua campanha mais inteligente e lucrativa.
+      </p>
+    </div>
+
+    <!-- Etapa 1 -->
+    <div class="stage">
+      <div class="stage-number">1</div>
+      <h2>Captação Inteligente</h2>
+      <div class="stage-desc">
+        <p><strong>O que faz:</strong> Atraí leads através de anúncios Meta com copy que fala direto com seu público.</p>
+        <p><strong>Como funciona:</strong> Você cria um anúncio com headline clara ("Veja ao vivo como pagar apenas por lead qualificado"). O lead clica e vai pra sua landing page.</p>
+        <p><strong>Resultado:</strong> Menos curiosos aleatórios. Mais pessoas interessadas que realmente querem saber como vender melhor.</p>
+      </div>
+    </div>
+
+    <!-- Etapa 2 -->
+    <div class="stage">
+      <div class="stage-number">2</div>
+      <h2>Entrada no Funil (Zero Atrito)</h2>
+      <div class="stage-desc">
+        <p><strong>O que faz:</strong> Leva o lead direto pro seu grupo privado no WhatsApp com um clique.</p>
+        <p><strong>Como funciona:</strong> Sem formulário chato. Sem 10 perguntas. Só um botão: "Quero apenas lead qualificado".</p>
+        <p><strong>Resultado:</strong> Taxa de conversão 3x maior. Pessoas que realmente querem continuar a conversa.</p>
+      </div>
+    </div>
+
+    <!-- Etapa 3 -->
+    <div class="stage">
+      <div class="stage-number">3</div>
+      <h2>Coleta de Dados via IA (Conversacional)</h2>
+      <div class="stage-desc">
+        <p><strong>O que faz:</strong> Um agente IA (Efraim) pergunta o nome e o faturamento do lead de forma natural.</p>
+        <p><strong>Como funciona:</strong> Lead entra no grupo → Efraim: "Parabéns por entrar! Me diz seu nome, tenho um presentinho pra você" → Lead responde → "Qual a faixa de faturamento?" → Lead responde.</p>
+        <p><strong>Resultado:</strong> Você agora sabe quem é o lead, quanto fatura e se vale a pena investir nele.</p>
+      </div>
+    </div>
+
+    <!-- Highlight: MQL e Meta -->
+    <div class="mql-box">
+      <h3>🎯 A Mágica: Evento MQL para o Meta</h3>
+      <p>
+        <strong>Aqui acontece o diferencial.</strong> Quando o lead informa que fatura R$ 30k+, o sistema automaticamente envia um evento chamado "MQL" (Marketing Qualified Lead) direto pro Meta através da Conversions API.
+      </p>
+      <p>
+        <strong>O que isso significa?</strong> O algoritmo do Meta aprende que leads com faturamento alto são os que realmente convertem. A partir daí, ele começa a trazer mais pessoas COM ESSE PERFIL — eliminando curiosos e trazendo apenas qualificados.
+      </p>
+      <p>
+        <strong>Impacto real:</strong>
+        <ul style="margin-top: 12px; margin-left: 20px;">
+          <li>❌ Antes: 100 cliques = 100 curiosos aleató­rios = 5 conversões</li>
+          <li>✅ Depois: 100 cliques = 80 leads qualificados = 25 conversões</li>
+        </ul>
+      </p>
+    </div>
+
+    <!-- Etapa 4 -->
+    <div class="stage">
+      <div class="stage-number">4</div>
+      <h2>Aquecimento e Rapport</h2>
+      <div class="stage-desc">
+        <p><strong>O que faz:</strong> Efraim constrói relacionamento com o lead e o prepara para a próxima etapa.</p>
+        <p><strong>Como funciona:</strong> Levanta a dor principal do lead (dificuldade em captar, converter, etc). Reconhece o momento do negócio dele (30k-100k é escala, 100k+ é otimização). Cria confiança.</p>
+        <p><strong>Resultado:</strong> Lead não sente pressão. Quer ouvir mais. Pronto pra assistir o vídeo de case ou a live.</p>
+      </div>
+    </div>
+
+    <!-- Etapa 5 -->
+    <div class="stage">
+      <div class="stage-number">5</div>
+      <h2>Confirmação e Fechamento</h2>
+      <div class="stage-desc">
+        <p><strong>O que faz:</strong> Efraim confirma a presença do lead na live/webinar e cria urgência leve.</p>
+        <p><strong>Como funciona:</strong> "Tá confirmado pra quinta às 20h?" → Lead confirma → "Vai ser intensa" → Lead sai da conversa aquecido e pronto.</p>
+        <p><strong>Resultado:</strong> Taxa de presença alta. Lead chega na live com expectativa. Conversão em cima.</p>
+      </div>
+    </div>
+
+    <!-- Impact Box -->
+    <div class="impact">
+      <h4>💰 Impacto no seu Faturamento</h4>
+      <ul>
+        <li>Reduz CPC (custo por clique) porque o Meta traz menos curiosos</li>
+        <li>Aumenta conversão porque qualifica antes</li>
+        <li>Menos reuniões perdidas, mais clientes de verdade</li>
+        <li>Campanha otimiza sozinha (Meta aprende quem é MQL)</li>
+      </ul>
+    </div>
+
+    <!-- Próximos Passos -->
+    <div class="highlight">
+      <h3>⚠️ O que NÃO está neste guia</h3>
+      <p>
+        Este guia mostra o conceito, mas a implementação é onde a mágica acontece de verdade. Como integrar o evento MQL exatamente no seu fluxo? Qual token usar? Como configurar no Meta? Como treinar o agente de IA pra sua persona específica?
+      </p>
+      <p style="margin-top: 12px;">
+        <strong>Tudo isso você vê na live ao vivo, com exemplos práticos do seu negócio.</strong>
+      </p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta">
+      <h3>Pronto para vender mais com IA?</h3>
+      <p>
+        Este é apenas um gostinho do que você vai aprender na live "Como Implementar Funil com IA do Zero".
+        <br><br>
+        Na live você vai ver o fluxo completo funcionando, números reais, e como adaptar pro seu negócio.
+      </p>
+      <p style="font-size: 13px; margin-top: 16px;">
+        <strong>🔴 Terça-feira ao meio-dia</strong><br>
+        Ao vivo no grupo do WhatsApp
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>Guia Prático — Funnel Platform com IA</p>
+      <p style="margin-top: 8px;">Desenvolvido por Fagner Batista | Funil com IA</p>
+    </div>
+  </div>
+</body>
+</html>
