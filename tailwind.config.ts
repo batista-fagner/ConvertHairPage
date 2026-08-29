@@ -84,11 +84,16 @@ export default {
             height: "0",
           },
         },
+        "soft-pulse": {
+          "0%, 100%": { transform: "scale(1)", boxShadow: "0 0 0 0 rgba(16, 185, 129, 0.45)" },
+          "50%": { transform: "scale(1.025)", boxShadow: "0 0 0 10px rgba(16, 185, 129, 0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         marquee: "marquee 20s linear infinite",
+        "soft-pulse": "soft-pulse 2.2s ease-in-out infinite",
       },
     },
   },
