@@ -34,6 +34,10 @@ interface QuizPresentation {
   // 900) que o resto do texto (que já é font-bold, 700).
   subtitleBoxBold?: string;
   bodyText?: string;
+  bodyTextFontSize?: number | null;
+  // trecho dentro de bodyText pra deixar com peso mais forte (font-black,
+  // 900) que o resto do texto (que é normal, sem peso extra).
+  bodyTextBold?: string;
   buttonLabel?: string;
   autoRedirectSeconds?: number | null;
 }
@@ -382,8 +386,15 @@ export default function Quiz() {
           )}
 
           {quiz.presentation.bodyText && (
-            <p className="text-sm text-neutral-300 whitespace-pre-line leading-relaxed">
-              {quiz.presentation.bodyText}
+            <p
+              className="text-neutral-300 whitespace-pre-line leading-relaxed"
+              style={{ fontSize: `${quiz.presentation.bodyTextFontSize || 14}px` }}
+            >
+              <HighlightedText
+                text={quiz.presentation.bodyText}
+                highlight={quiz.presentation.bodyTextBold}
+                highlightClassName="font-black text-white"
+              />
             </p>
           )}
 
