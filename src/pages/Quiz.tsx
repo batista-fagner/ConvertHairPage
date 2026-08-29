@@ -29,6 +29,10 @@ interface QuizPresentation {
   titleHighlight?: string;
   titleFontSize?: number | null;
   subtitleBox?: string;
+  subtitleBoxFontSize?: number | null;
+  // trecho dentro de subtitleBox pra deixar com peso mais forte (font-black,
+  // 900) que o resto do texto (que já é font-bold, 700).
+  subtitleBoxBold?: string;
   bodyText?: string;
   buttonLabel?: string;
   autoRedirectSeconds?: number | null;
@@ -123,19 +127,28 @@ function ProgressBar({ percent, durationMs = 500 }: { percent: number; durationM
   );
 }
 
-// titleHighlight é um TRECHO que já aparece dentro de title (ex: title="Como
-// vende cabelo todo dia", titleHighlight="vende") — colore só esse trecho in
-// place, em vez de aparecer um texto extra colado no final.
-function HighlightedTitle({ title, highlight }: { title?: string; highlight?: string }) {
-  if (!title) return null;
-  if (!highlight) return <>{title}</>;
-  const idx = title.indexOf(highlight);
-  if (idx === -1) return <>{title}</>;
+// highlight é um TRECHO que já aparece dentro de text (ex: text="Como vende
+// cabelo todo dia", highlight="vende") — estiliza só esse trecho in place
+// (cor por padrão, ou outra classe via highlightClassName), em vez de
+// aparecer um texto extra colado no final.
+function HighlightedText({
+  text,
+  highlight,
+  highlightClassName = "text-blue-500",
+}: {
+  text?: string;
+  highlight?: string;
+  highlightClassName?: string;
+}) {
+  if (!text) return null;
+  if (!highlight) return <>{text}</>;
+  const idx = text.indexOf(highlight);
+  if (idx === -1) return <>{text}</>;
   return (
     <>
-      {title.slice(0, idx)}
-      <span className="text-blue-500">{highlight}</span>
-      {title.slice(idx + highlight.length)}
+      {text.slice(0, idx)}
+      <span className={highlightClassName}>{highlight}</span>
+      {text.slice(idx + highlight.length)}
     </>
   );
 }
@@ -352,12 +365,19 @@ export default function Quiz() {
             className="font-extrabold leading-tight"
             style={{ fontSize: `${quiz.presentation.titleFontSize || 30}px` }}
           >
-            <HighlightedTitle title={quiz.presentation.title} highlight={quiz.presentation.titleHighlight} />
+            <HighlightedText text={quiz.presentation.title} highlight={quiz.presentation.titleHighlight} />
           </h1>
 
           {quiz.presentation.subtitleBox && (
-            <div className="rounded-lg border border-blue-900/60 bg-blue-950/40 px-4 py-3 text-sm font-bold uppercase tracking-tight">
-              {quiz.presentation.subtitleBox}
+            <div
+              className="rounded-lg border border-blue-900/60 bg-blue-950/40 px-4 py-3 font-bold uppercase tracking-tight"
+              style={{ fontSize: `${quiz.presentation.subtitleBoxFontSize || 14}px` }}
+            >
+              <HighlightedText
+                text={quiz.presentation.subtitleBox}
+                highlight={quiz.presentation.subtitleBoxBold}
+                highlightClassName="font-black"
+              />
             </div>
           )}
 
@@ -405,7 +425,7 @@ export default function Quiz() {
       {step.kind === "final" && (
         <div className="px-4 pt-8 pb-8 flex flex-col gap-4">
           <h2 className="text-2xl font-extrabold leading-tight">
-            <HighlightedTitle title={quiz.finalStep.title} highlight={quiz.finalStep.titleHighlight} />
+            <HighlightedText text={quiz.finalStep.title} highlight={quiz.finalStep.titleHighlight} />
           </h2>
 
           {quiz.finalStep.progressLabel && (
