@@ -63,6 +63,9 @@ interface QuizData {
   name: string;
   slug: string;
   whatsappUrl?: string | null;
+  // Pixel próprio da campanha (opcional) — sem fbAccessToken aqui, esse fica
+  // só no backend (é segredo do CAPI, nunca sai pro browser).
+  fbPixelId?: string | null;
   presentation: QuizPresentation;
   questions: QuizQuestion[];
   finalStep: QuizFinalStep;
@@ -203,6 +206,18 @@ export default function Quiz() {
 
   const tracking = useMemo(() => captureTracking(), []);
   const whatsappUrl = quiz?.whatsappUrl || DEFAULT_WA_URL;
+  const initedPixelRef = useRef<string | null>(null);
+
+  // Pixel próprio da campanha (se configurado no builder) — inicializa e
+  // dispara PageView SÓ nesse pixel (trackSingle), sem tocar no pixel padrão
+  // do index.html (que é de outra campanha/projeto, não deve misturar sinal).
+  useEffect(() => {
+    if (isPreview || !quiz?.fbPixelId || typeof window.fbq !== "function") return;
+    if (initedPixelRef.current === quiz.fbPixelId) return;
+    initedPixelRef.current = quiz.fbPixelId;
+    window.fbq("init", quiz.fbPixelId);
+    window.fbq("trackSingle", quiz.fbPixelId, "PageView");
+  }, [quiz?.fbPixelId, isPreview]);
 
   useEffect(() => {
     if (!slug || isPreview) return;
@@ -312,6 +327,17 @@ export default function Quiz() {
         keepalive: true,
       });
       const data = await res.json().catch(() => null);
+
+      // Dispara o Pixel client-side com o MESMO event_id que o backend usou
+      // no CAPI (quiz.service.ts) — mesmo clickId, mesmo formato de string —
+      // pro Meta deduplicar os dois envios do mesmo evento de negócio.
+      if (quiz.fbPixelId && tracking.clickId && typeof window.fbq === "function") {
+        window.fbq("trackSingle", quiz.fbPixelId, "QuizCompleto", {}, { eventID: `quiz-complete-${tracking.clickId}` });
+        for (const eventName of data?.mqlEvents || []) {
+          window.fbq("trackSingle", quiz.fbPixelId, eventName, {}, { eventID: `quiz-mql-${eventName}-${tracking.clickId}` });
+        }
+      }
+
       redirectTo(data?.redirectUrl || whatsappUrl);
     } catch {
       redirectTo(whatsappUrl);
