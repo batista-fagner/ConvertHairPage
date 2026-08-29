@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
@@ -38,7 +38,15 @@ interface QuizFinalStep {
   progressLabel?: string;
   bodyText?: string;
   buttonLabel?: string;
+  // segundos que a barra leva animando até 100% — o auto-redirect pro
+  // whatsappUrl dispara exatamente quando a animação termina.
+  autoRedirectSeconds?: number | null;
 }
+
+const DEFAULT_FINAL_AUTO_REDIRECT_SECONDS = 4;
+// Ponto de partida da barra na tela final — a pessoa já andou o quiz inteiro
+// (a barra do topo mostra isso), aqui é só o trecho "quase lá" que anima até 100%.
+const FINAL_BAR_START_PERCENT = 60;
 
 interface QuizData {
   id: string;
@@ -102,12 +110,12 @@ function PhoneFrame({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ProgressBar({ percent }: { percent: number }) {
+function ProgressBar({ percent, durationMs = 500 }: { percent: number; durationMs?: number }) {
   return (
     <div className="h-1.5 w-full bg-neutral-800 rounded-full overflow-hidden">
       <div
-        className="h-full bg-white rounded-full transition-all duration-500"
-        style={{ width: `${percent}%` }}
+        className="h-full bg-white rounded-full transition-[width] ease-linear"
+        style={{ width: `${percent}%`, transitionDuration: `${durationMs}ms` }}
       />
     </div>
   );
@@ -150,6 +158,8 @@ export default function Quiz() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [countdown, setCountdown] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [finalBarPercent, setFinalBarPercent] = useState(FINAL_BAR_START_PERCENT);
+  const finishedRef = useRef(false);
 
   const tracking = useMemo(() => captureTracking(), []);
   const whatsappUrl = quiz?.whatsappUrl || DEFAULT_WA_URL;
@@ -184,6 +194,22 @@ export default function Quiz() {
     return () => clearInterval(tick);
   }, [step, quiz, whatsappUrl]);
 
+  // Tela final: a barra anima até 100% e o auto-redirect pro whatsappUrl
+  // dispara exatamente quando a animação termina (mesmo tempo configurado).
+  // O botão continua funcionando a qualquer momento, adiantando o redirect.
+  useEffect(() => {
+    if (step.kind !== "final") return;
+    const seconds = quiz?.finalStep.autoRedirectSeconds ?? DEFAULT_FINAL_AUTO_REDIRECT_SECONDS;
+    setFinalBarPercent(FINAL_BAR_START_PERCENT);
+    const raf = requestAnimationFrame(() => setFinalBarPercent(100));
+    const timer = setTimeout(() => handleFinish(), seconds * 1000);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, quiz]);
+
   function goToQuestion(index: number) {
     if (!quiz) return;
     if (index >= quiz.questions.length) {
@@ -199,7 +225,8 @@ export default function Quiz() {
   }
 
   async function handleFinish() {
-    if (!quiz || submitting) return;
+    if (!quiz || finishedRef.current) return;
+    finishedRef.current = true;
     setSubmitting(true);
     const payload = {
       answers: Object.entries(answers).map(([questionId, optionId]) => ({ questionId, optionId })),
@@ -332,9 +359,12 @@ export default function Quiz() {
             <div>
               <div className="flex items-center justify-between text-sm font-bold mb-1.5">
                 <span>{quiz.finalStep.progressLabel}</span>
-                <span>{progressPercent}%</span>
+                <span>{finalBarPercent}%</span>
               </div>
-              <ProgressBar percent={progressPercent} />
+              <ProgressBar
+                percent={finalBarPercent}
+                durationMs={(quiz.finalStep.autoRedirectSeconds ?? DEFAULT_FINAL_AUTO_REDIRECT_SECONDS) * 1000}
+              />
             </div>
           )}
 
