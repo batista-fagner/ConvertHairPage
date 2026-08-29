@@ -26,6 +26,7 @@ interface QuizPresentation {
   photoUrl?: string;
   title?: string;
   titleHighlight?: string;
+  titleFontSize?: number | null;
   subtitleBox?: string;
   bodyText?: string;
   buttonLabel?: string;
@@ -345,7 +346,10 @@ export default function Quiz() {
             />
           )}
 
-          <h1 className="text-3xl font-extrabold leading-tight">
+          <h1
+            className="font-extrabold leading-tight"
+            style={{ fontSize: `${quiz.presentation.titleFontSize || 30}px` }}
+          >
             <HighlightedTitle title={quiz.presentation.title} highlight={quiz.presentation.titleHighlight} />
           </h1>
 
