@@ -24,6 +24,7 @@ interface QuizPresentation {
   badgeSubtitle?: string;
   badgeDateLine?: string;
   photoUrl?: string;
+  photoMaxHeight?: number | null;
   title?: string;
   titleHighlight?: string;
   titleFontSize?: number | null;
@@ -342,7 +343,8 @@ export default function Quiz() {
             <img
               src={quiz.presentation.photoUrl}
               alt=""
-              className="w-full rounded-2xl object-cover max-h-[340px]"
+              className="w-full rounded-2xl object-cover"
+              style={{ maxHeight: `${quiz.presentation.photoMaxHeight || 340}px` }}
             />
           )}
 
