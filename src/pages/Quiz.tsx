@@ -121,6 +121,23 @@ function ProgressBar({ percent, durationMs = 500 }: { percent: number; durationM
   );
 }
 
+// titleHighlight é um TRECHO que já aparece dentro de title (ex: title="Como
+// vende cabelo todo dia", titleHighlight="vende") — colore só esse trecho in
+// place, em vez de aparecer um texto extra colado no final.
+function HighlightedTitle({ title, highlight }: { title?: string; highlight?: string }) {
+  if (!title) return null;
+  if (!highlight) return <>{title}</>;
+  const idx = title.indexOf(highlight);
+  if (idx === -1) return <>{title}</>;
+  return (
+    <>
+      {title.slice(0, idx)}
+      <span className="text-blue-500">{highlight}</span>
+      {title.slice(idx + highlight.length)}
+    </>
+  );
+}
+
 function Badge({ title, subtitle, dateLine }: { title?: string; subtitle?: string; dateLine?: string }) {
   if (!title && !dateLine) return null;
   const [left, right] = (dateLine || "").split("•").map((s) => s.trim());
@@ -152,6 +169,10 @@ type Step = { kind: "presentation" } | { kind: "question"; index: number } | { k
 
 export default function Quiz() {
   const { slug } = useParams();
+  // /q/preview: usado pelo builder do CRM dentro de um <iframe> pra mostrar o
+  // quiz ao vivo enquanto edita, sem precisar salvar — recebe o JSON do quiz
+  // via postMessage em vez de buscar da API (o rascunho não existe no banco).
+  const isPreview = slug === "preview";
   const [quiz, setQuiz] = useState<QuizData | null>(null);
   const [error, setError] = useState(false);
   const [step, setStep] = useState<Step>({ kind: "presentation" });
@@ -165,7 +186,7 @@ export default function Quiz() {
   const whatsappUrl = quiz?.whatsappUrl || DEFAULT_WA_URL;
 
   useEffect(() => {
-    if (!slug) return;
+    if (!slug || isPreview) return;
     fetch(`${API_URL}/quiz/${slug}`)
       .then((res) => {
         if (!res.ok) throw new Error("not found");
@@ -173,7 +194,31 @@ export default function Quiz() {
       })
       .then((data: QuizData) => setQuiz(data))
       .catch(() => setError(true));
-  }, [slug]);
+  }, [slug, isPreview]);
+
+  // Modo preview: recebe o quiz (ainda não salvo) do builder via postMessage
+  // e nunca navega de verdade — "redirectTo" reinicia a demonstração em loop.
+  useEffect(() => {
+    if (!isPreview) return;
+    function handleMessage(event: MessageEvent) {
+      if (event.data?.type !== "quiz-preview-data") return;
+      setQuiz(event.data.quiz);
+    }
+    window.addEventListener("message", handleMessage);
+    window.parent.postMessage({ type: "quiz-preview-ready" }, "*");
+    return () => window.removeEventListener("message", handleMessage);
+  }, [isPreview]);
+
+  function redirectTo(url: string) {
+    if (isPreview) {
+      finishedRef.current = false;
+      setAnswers({});
+      setSubmitting(false);
+      setStep({ kind: "presentation" });
+      return;
+    }
+    window.location.href = url;
+  }
 
   // Auto-redirect direto pro grupo se a pessoa não interagir na apresentação.
   useEffect(() => {
@@ -185,7 +230,7 @@ export default function Quiz() {
       setCountdown((c) => {
         if (c === null) return null;
         if (c <= 1) {
-          window.location.href = whatsappUrl;
+          redirectTo(whatsappUrl);
           return 0;
         }
         return c - 1;
@@ -227,6 +272,14 @@ export default function Quiz() {
   async function handleFinish() {
     if (!quiz || finishedRef.current) return;
     finishedRef.current = true;
+
+    // Preview não existe no banco — nunca chama o submit real (não dispara
+    // evento no Meta nem entra na fila de tracking), só simula o final.
+    if (isPreview) {
+      redirectTo(whatsappUrl);
+      return;
+    }
+
     setSubmitting(true);
     const payload = {
       answers: Object.entries(answers).map(([questionId, optionId]) => ({ questionId, optionId })),
@@ -240,9 +293,9 @@ export default function Quiz() {
         keepalive: true,
       });
       const data = await res.json().catch(() => null);
-      window.location.href = data?.redirectUrl || whatsappUrl;
+      redirectTo(data?.redirectUrl || whatsappUrl);
     } catch {
-      window.location.href = whatsappUrl;
+      redirectTo(whatsappUrl);
     }
   }
 
@@ -293,10 +346,7 @@ export default function Quiz() {
           )}
 
           <h1 className="text-3xl font-extrabold leading-tight">
-            {quiz.presentation.title}{" "}
-            {quiz.presentation.titleHighlight && (
-              <span className="text-blue-500">{quiz.presentation.titleHighlight}</span>
-            )}
+            <HighlightedTitle title={quiz.presentation.title} highlight={quiz.presentation.titleHighlight} />
           </h1>
 
           {quiz.presentation.subtitleBox && (
@@ -349,10 +399,7 @@ export default function Quiz() {
       {step.kind === "final" && (
         <div className="px-4 pt-8 pb-8 flex flex-col gap-4">
           <h2 className="text-2xl font-extrabold leading-tight">
-            {quiz.finalStep.title}{" "}
-            {quiz.finalStep.titleHighlight && (
-              <span className="text-blue-500">{quiz.finalStep.titleHighlight}</span>
-            )}
+            <HighlightedTitle title={quiz.finalStep.title} highlight={quiz.finalStep.titleHighlight} />
           </h2>
 
           {quiz.finalStep.progressLabel && (
