@@ -333,6 +333,7 @@ export default function Quiz() {
       // pro Meta deduplicar os dois envios do mesmo evento de negócio.
       if (quiz.fbPixelId && tracking.clickId && typeof window.fbq === "function") {
         window.fbq("trackSingle", quiz.fbPixelId, "QuizCompleto", {}, { eventID: `quiz-complete-${tracking.clickId}` });
+        window.fbq("trackSingle", quiz.fbPixelId, "Lead", {}, { eventID: `quiz-lead-${tracking.clickId}` });
         for (const eventName of data?.mqlEvents || []) {
           window.fbq("trackSingle", quiz.fbPixelId, eventName, {}, { eventID: `quiz-mql-${eventName}-${tracking.clickId}` });
         }
