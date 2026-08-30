@@ -14,17 +14,18 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="LeadsCOMIA — Análise de Perfil com IA">
     <meta name="twitter:description" content="Descubra como otimizar seu negócio com IA.">
-    <!-- Meta Pixel -->
+    <!-- Meta Pixel loader — só carrega o SDK (window.fbq), sem init de pixel
+    fixo. O pixel antigo (1313939170331855) foi removido por não ter propósito
+    ativo (não estava ligado a nenhuma campanha em uso); o Quiz.tsx faz seu
+    próprio fbq('init', ...) com o pixel dedicado de cada campanha. -->
     <script>
       !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
       n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
       t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
       (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1313939170331855');
-      fbq('track', 'PageView');
     </script>
-    <!-- End Meta Pixel -->
+    <!-- End Meta Pixel loader -->
   </head>
 
   <body>
