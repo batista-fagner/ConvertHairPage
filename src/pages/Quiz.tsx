@@ -215,9 +215,12 @@ export default function Quiz() {
     if (isPreview || !quiz?.fbPixelId || typeof window.fbq !== "function") return;
     if (initedPixelRef.current === quiz.fbPixelId) return;
     initedPixelRef.current = quiz.fbPixelId;
-    window.fbq("init", quiz.fbPixelId);
+    // external_id: mesmo clickId usado no CAPI (quiz.service.ts) — ajuda o
+    // Meta a reconhecer a mesma pessoa entre Pixel e CAPI, melhora o Event
+    // Match Quality (parâmetro "Identificação externa" no Events Manager).
+    window.fbq("init", quiz.fbPixelId, tracking.clickId ? { external_id: tracking.clickId } : undefined);
     window.fbq("trackSingle", quiz.fbPixelId, "PageView");
-  }, [quiz?.fbPixelId, isPreview]);
+  }, [quiz?.fbPixelId, isPreview, tracking.clickId]);
 
   useEffect(() => {
     if (!slug || isPreview) return;
