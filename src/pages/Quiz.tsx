@@ -212,10 +212,10 @@ export default function Quiz() {
   // dispara PageView SÓ nesse pixel (trackSingle), sem tocar no pixel padrão
   // do index.html (que é de outra campanha/projeto, não deve misturar sinal).
   //
-  // "Lead" (evento padrão do Meta) dispara aqui também — na 1ª tela do quiz
-  // (apresentação), não mais na conclusão (QuizCompleto já cobre "terminou o
-  // quiz"; ter os dois no mesmo momento seria redundante). Client (fbq) +
-  // CAPI (/view, servidor) usando o MESMO eventID pra dedupe.
+  // "Lead" NÃO dispara aqui — já disparou nessa posição (1ª tela) e causou um
+  // problema real: ficou quase idêntico ao PageView, e a campanha passou a
+  // otimizar pra "abriu a página" (sinal fraco) em vez de "terminou o quiz",
+  // gastando rápido sem retorno. Voltou a disparar só em handleFinish().
   useEffect(() => {
     if (isPreview || !quiz?.fbPixelId || typeof window.fbq !== "function") return;
     if (initedPixelRef.current === quiz.fbPixelId) return;
@@ -225,22 +225,7 @@ export default function Quiz() {
     // Match Quality (parâmetro "Identificação externa" no Events Manager).
     window.fbq("init", quiz.fbPixelId, tracking.clickId ? { external_id: tracking.clickId } : undefined);
     window.fbq("trackSingle", quiz.fbPixelId, "PageView");
-    if (tracking.clickId) {
-      window.fbq("trackSingle", quiz.fbPixelId, "Lead", {}, { eventID: `quiz-view-${tracking.clickId}` });
-    }
   }, [quiz?.fbPixelId, isPreview, tracking.clickId]);
-
-  const trackedViewRef = useRef(false);
-  useEffect(() => {
-    if (isPreview || !slug || !quiz?.fbPixelId || trackedViewRef.current) return;
-    trackedViewRef.current = true;
-    fetch(`${API_URL}/quiz/${slug}/view`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(tracking),
-      keepalive: true,
-    }).catch(() => {});
-  }, [isPreview, slug, quiz?.fbPixelId, tracking]);
 
   useEffect(() => {
     if (!slug || isPreview) return;
@@ -356,6 +341,7 @@ export default function Quiz() {
       // pro Meta deduplicar os dois envios do mesmo evento de negócio.
       if (quiz.fbPixelId && tracking.clickId && typeof window.fbq === "function") {
         window.fbq("trackSingle", quiz.fbPixelId, "QuizCompleto", {}, { eventID: `quiz-complete-${tracking.clickId}` });
+        window.fbq("trackSingle", quiz.fbPixelId, "Lead", {}, { eventID: `quiz-lead-${tracking.clickId}` });
         for (const eventName of data?.mqlEvents || []) {
           window.fbq("trackSingle", quiz.fbPixelId, eventName, {}, { eventID: `quiz-mql-${eventName}-${tracking.clickId}` });
         }
