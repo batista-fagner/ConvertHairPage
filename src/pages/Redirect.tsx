@@ -2,59 +2,17 @@ import { useEffect, useState } from "react";
 
 const WA_URL = import.meta.env.VITE_WA_URL || "https://chat.whatsapp.com/";
 
-function getCookie(name: string): string | null {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
-  return null;
-}
-
-function trackClick() {
-  const params = new URLSearchParams(window.location.search);
-  const fbclid = params.get("fbclid");
-  const utmSource = params.get("utm_source");
-  const utmMedium = params.get("utm_medium");
-  const utmCampaign = params.get("utm_campaign");
-  const utmContent = params.get("utm_content");
-  const utmTerm = params.get("utm_term");
-
-  if (fbclid) localStorage.setItem("fbclid", fbclid);
-  if (utmSource) localStorage.setItem("utm_source", utmSource);
-  if (utmMedium) localStorage.setItem("utm_medium", utmMedium);
-  if (utmCampaign) localStorage.setItem("utm_campaign", utmCampaign);
-  if (utmContent) localStorage.setItem("utm_content", utmContent);
-  if (utmTerm) localStorage.setItem("utm_term", utmTerm);
-  if (!localStorage.getItem("click_id")) {
-    localStorage.setItem("click_id", crypto.randomUUID());
-  }
-
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
-  const payload = {
-    utmSource: utmSource || localStorage.getItem("utm_source") || undefined,
-    utmMedium: utmMedium || localStorage.getItem("utm_medium") || undefined,
-    utmCampaign: utmCampaign || localStorage.getItem("utm_campaign") || undefined,
-    utmContent: utmContent || localStorage.getItem("utm_content") || undefined,
-    utmTerm: utmTerm || localStorage.getItem("utm_term") || undefined,
-    fbclid: fbclid || localStorage.getItem("fbclid") || undefined,
-    fbc: getCookie("_fbc") || undefined,
-    fbp: getCookie("_fbp") || undefined,
-    clickId: localStorage.getItem("click_id") || undefined,
-  };
-
-  fetch(`${apiUrl}/track/click`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    keepalive: true,
-  }).catch(() => {});
-}
-
 const Redirect = () => {
   const [countdown, setCountdown] = useState(1);
 
+  // Rastreamento de clique (/api/track/click) removido desta rota — ela
+  // escrevia na MESMA fila FIFO usada pelo quiz (TrackingService), e qualquer
+  // acesso a "/" (bot de preview do Meta, link antigo, teste manual) podia
+  // "furar a fila" na frente de uma resposta real do quiz, fazendo o
+  // GroupJoinService atribuir o clique errado a quem entrasse no grupo em
+  // seguida. Rota fica só com o redirect — sem campanha ativa apontando pra
+  // cá, não precisa mais competir pela fila do quiz.
   useEffect(() => {
-    trackClick();
-
     const timer = setTimeout(() => {
       window.location.href = WA_URL;
     }, 1500);
