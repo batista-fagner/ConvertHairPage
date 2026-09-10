@@ -206,26 +206,11 @@ export default function Quiz() {
 
   const tracking = useMemo(() => captureTracking(), []);
   const whatsappUrl = quiz?.whatsappUrl || DEFAULT_WA_URL;
-  const initedPixelRef = useRef<string | null>(null);
 
-  // Pixel próprio da campanha (se configurado no builder) — inicializa e
-  // dispara PageView SÓ nesse pixel (trackSingle), sem tocar no pixel padrão
-  // do index.html (que é de outra campanha/projeto, não deve misturar sinal).
-  //
-  // "Lead" NÃO dispara aqui — já disparou nessa posição (1ª tela) e causou um
-  // problema real: ficou quase idêntico ao PageView, e a campanha passou a
-  // otimizar pra "abriu a página" (sinal fraco) em vez de "terminou o quiz",
-  // gastando rápido sem retorno. Voltou a disparar só em handleFinish().
-  useEffect(() => {
-    if (isPreview || !quiz?.fbPixelId || typeof window.fbq !== "function") return;
-    if (initedPixelRef.current === quiz.fbPixelId) return;
-    initedPixelRef.current = quiz.fbPixelId;
-    // external_id: mesmo clickId usado no CAPI (quiz.service.ts) — ajuda o
-    // Meta a reconhecer a mesma pessoa entre Pixel e CAPI, melhora o Event
-    // Match Quality (parâmetro "Identificação externa" no Events Manager).
-    window.fbq("init", quiz.fbPixelId, tracking.clickId ? { external_id: tracking.clickId } : undefined);
-    window.fbq("trackSingle", quiz.fbPixelId, "PageView");
-  }, [quiz?.fbPixelId, isPreview, tracking.clickId]);
+  // Sem pixel client-side nessa página — todos os eventos (PageView não
+  // disparado aqui, QuizCompleto/Lead/MQL) vão 100% via CAPI (backend,
+  // quiz.service.ts / sdr-group-join.service.ts), pra evitar duplicidade
+  // e permitir usar o pixel/token certo por quiz sem depender do navegador.
 
   useEffect(() => {
     if (!slug || isPreview) return;
@@ -335,17 +320,6 @@ export default function Quiz() {
         keepalive: true,
       });
       const data = await res.json().catch(() => null);
-
-      // Dispara o Pixel client-side com o MESMO event_id que o backend usou
-      // no CAPI (quiz.service.ts) — mesmo clickId, mesmo formato de string —
-      // pro Meta deduplicar os dois envios do mesmo evento de negócio.
-      if (quiz.fbPixelId && tracking.clickId && typeof window.fbq === "function") {
-        window.fbq("trackSingle", quiz.fbPixelId, "QuizCompleto", {}, { eventID: `quiz-complete-${tracking.clickId}` });
-        window.fbq("trackSingle", quiz.fbPixelId, "Lead", {}, { eventID: `quiz-lead-${tracking.clickId}` });
-        for (const eventName of data?.mqlEvents || []) {
-          window.fbq("trackSingle", quiz.fbPixelId, eventName, {}, { eventID: `quiz-mql-${eventName}-${tracking.clickId}` });
-        }
-      }
 
       redirectTo(data?.redirectUrl || whatsappUrl);
     } catch {
