@@ -7,6 +7,7 @@ import Redirect from "./pages/Redirect.tsx";
 import Index from "./pages/Index.tsx";
 import Result from "./pages/Result.tsx";
 import Quiz from "./pages/Quiz.tsx";
+import Oferta5Fornecedores from "./pages/Oferta5Fornecedores.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/lp" element={<Index />} />
           <Route path="/resultado" element={<Result />} />
           <Route path="/q/:slug" element={<Quiz />} />
+          <Route path="/oferta/5-fornecedores" element={<Oferta5Fornecedores />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
