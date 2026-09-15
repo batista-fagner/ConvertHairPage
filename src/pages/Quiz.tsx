@@ -212,6 +212,20 @@ export default function Quiz() {
   // quiz.service.ts / sdr-group-join.service.ts), pra evitar duplicidade
   // e permitir usar o pixel/token certo por quiz sem depender do navegador.
 
+  // Ping de progresso em segundo plano — não bloqueia nem atrasa a navegação
+  // do quiz (sem await no chamador, keepalive garante que sobrevive mesmo se
+  // a pessoa fechar a aba logo em seguida). Falha silenciosa de propósito:
+  // perder um ping não pode nunca travar a experiência de quem responde.
+  function sendProgress(questionIndex: number, questionId?: string, optionId?: string) {
+    if (isPreview || !quiz) return;
+    fetch(`${API_URL}/quiz/${quiz.slug}/progress`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clickId: tracking.clickId, questionIndex, questionId, optionId }),
+      keepalive: true,
+    }).catch(() => {});
+  }
+
   useEffect(() => {
     if (!slug || isPreview) return;
     fetch(`${API_URL}/quiz/${slug}`)
@@ -222,6 +236,14 @@ export default function Quiz() {
       .then((data: QuizData) => setQuiz(data))
       .catch(() => setError(true));
   }, [slug, isPreview]);
+
+  // "started" — abriu o quiz, ainda não respondeu nada. Dispara 1x assim que
+  // o quiz carrega, pra medir bounce puro (quem nem começa a responder).
+  useEffect(() => {
+    if (!quiz || isPreview) return;
+    sendProgress(-1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quiz, isPreview]);
 
   // Modo preview: recebe o quiz (ainda não salvo) do builder via postMessage
   // e nunca navega de verdade — "redirectTo" reinicia a demonstração em loop.
@@ -293,6 +315,7 @@ export default function Quiz() {
 
   function selectAnswer(question: QuizQuestion, optionId: string, index: number) {
     setAnswers((prev) => ({ ...prev, [question.id]: optionId }));
+    sendProgress(index, question.id, optionId);
     setTimeout(() => goToQuestion(index + 1), 250);
   }
 
