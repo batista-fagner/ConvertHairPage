@@ -319,6 +319,29 @@ export default function Quiz() {
     setTimeout(() => goToQuestion(index + 1), 250);
   }
 
+  // Guarda respostas específicas no navegador (não no backend) pra uma
+  // eventual página final (fora deste componente, ex: Oferta5Fornecedores.tsx)
+  // poder personalizar o texto — casamento por palavra-chave na pergunta, não
+  // por id/índice, mesmo padrão já usado em getQuizStats() no backend (o
+  // texto exato da pergunta pode variar entre edições no builder).
+  function savePersonalization() {
+    if (!quiz) return;
+    const findAnswerByKeyword = (keyword: string): string | undefined => {
+      const q = quiz.questions.find((qq) => qq.question.toLowerCase().includes(keyword));
+      if (!q) return undefined;
+      return q.options.find((o) => o.id === answers[q.id])?.label;
+    };
+    try {
+      localStorage.setItem(
+        `quiz_personalization_${quiz.slug}`,
+        JSON.stringify({ faturamento: findAnswerByKeyword("fatura"), mudaria: findAnswerByKeyword("mudaria") }),
+      );
+    } catch {
+      // localStorage indisponível (modo privado etc) — personalização vira
+      // opcional na página final, não é crítico.
+    }
+  }
+
   async function handleFinish() {
     if (!quiz || finishedRef.current) return;
     finishedRef.current = true;
@@ -330,6 +353,7 @@ export default function Quiz() {
       return;
     }
 
+    savePersonalization();
     setSubmitting(true);
     const payload = {
       answers: Object.entries(answers).map(([questionId, optionId]) => ({ questionId, optionId })),

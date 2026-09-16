@@ -13,6 +13,41 @@ import {
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
 const QUIZ_SLUG = "5fornecedores";
 
+// Piso de faturamento por faixa do quiz — usado só pra garantir que a conta
+// de "menos de X%" seja SEMPRE verdadeira mesmo no pior caso da faixa (nunca
+// o valor exato, que a gente não tem). "Até 10 mil" não tem piso declarado no
+// quiz, então usa uma estimativa conservadora de quem já revende cabelo.
+const REVENUE_FLOOR: Record<string, number> = {
+  "Até 10 mil": 5000,
+  "10 mil a 20 mil": 10000,
+  "20 mil a 30 mil": 20000,
+  "Acima de 30 mil": 30000,
+};
+
+interface Personalization {
+  faturamento?: string;
+  mudaria?: string;
+}
+
+function readPersonalization(slug: string): Personalization {
+  try {
+    const raw = localStorage.getItem(`quiz_personalization_${slug}`);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function parsePrice(value?: string): number | null {
+  if (!value) return null;
+  const n = parseFloat(value.replace(/[^\d,.-]/g, "").replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+}
+
+function formatPct(n: number): string {
+  return Number.isInteger(n) ? String(n) : String(n).replace(".", ",");
+}
+
 interface Fornecedor {
   numero: number;
   diferencial: string;
@@ -145,6 +180,9 @@ export default function Oferta5Fornecedores() {
   const [salesPage, setSalesPage] = useState<SalesPage | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [loadingCheckout, setLoadingCheckout] = useState(true);
+  // Lida uma vez, na montagem — gravado pelo quiz (Quiz.tsx) no navegador
+  // dela antes de redirecionar pra cá, não vem de API nem de query string.
+  const [personalization] = useState<Personalization>(() => readPersonalization(QUIZ_SLUG));
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -173,6 +211,17 @@ export default function Oferta5Fornecedores() {
   const fornecedores = pick(sp.fornecedores, DEFAULT.fornecedores);
   const faq = pick(sp.faq, DEFAULT.faq);
 
+  // Personaliza a ancoragem de valor com a faixa de faturamento que ELA
+  // respondeu no quiz — cai pro texto genérico do builder se não tiver o
+  // dado (acessou a página direto, sem passar pelo quiz) ou a faixa não bater
+  // com nenhuma configurada acima.
+  const revenueFloor = personalization.faturamento ? REVENUE_FLOOR[personalization.faturamento] : undefined;
+  const price = parsePrice(sp.precoPor || DEFAULT.precoPor);
+  const valorRodape =
+    revenueFloor && price
+      ? `Você disse que fatura ${personalization.faturamento} — isso representa menos de ${formatPct(Math.ceil((price / revenueFloor) * 1000) / 10)}% do seu faturamento, pra nunca mais depender de sorte na hora de escolher fornecedor.`
+      : sp.valorRodape || DEFAULT.valorRodape;
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       {/* Background ambiente — mesmo padrão visual do resto do site */}
@@ -199,6 +248,17 @@ export default function Oferta5Fornecedores() {
               <p className="animate-fade-up-delay-2 mx-auto max-w-xl text-lg leading-relaxed text-muted-foreground">
                 {sp.headlineSubtitle || DEFAULT.headlineSubtitle}
               </p>
+
+              {/* Callback da resposta dela na última pergunta do quiz ("o que
+                  isso mudaria pra você") — só aparece se a personalização
+                  existir (veio do quiz de verdade, não acesso direto). */}
+              {personalization.mudaria && (
+                <div className="animate-fade-up-delay-3 mx-auto mt-6 max-w-xl rounded-2xl border border-primary/20 bg-primary/5 px-5 py-4">
+                  <p className="text-sm leading-relaxed text-foreground">
+                    Você mesma disse que isso mudaria: <span className="font-semibold">"{personalization.mudaria}"</span> — é exatamente isso que essa lista entrega.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -295,7 +355,7 @@ export default function Oferta5Fornecedores() {
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">{sp.valorRodape || DEFAULT.valorRodape}</p>
+              <p className="text-sm text-muted-foreground">{valorRodape}</p>
             </div>
           </div>
         </section>
