@@ -276,7 +276,7 @@ export default function Oferta5Fornecedores() {
                   highlight={sp.headlineHighlight ?? DEFAULT.headlineHighlight}
                 />
               </h1>
-              <p className="animate-fade-up-delay-2 mx-auto max-w-xl text-lg leading-relaxed text-muted-foreground">
+              <p className="animate-fade-up-delay-2 mx-auto max-w-xl text-lg leading-relaxed text-foreground">
                 {sp.headlineSubtitle || DEFAULT.headlineSubtitle}
               </p>
 
@@ -305,7 +305,7 @@ export default function Oferta5Fornecedores() {
                       <AlertTriangle className="h-5 w-5 text-destructive" />
                     </div>
                     <h3 className="mb-2 font-semibold">{dor.titulo}</h3>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{dor.texto}</p>
+                    <p className="text-sm leading-relaxed text-foreground">{dor.texto}</p>
                   </div>
                 ))}
               </div>
@@ -326,7 +326,7 @@ export default function Oferta5Fornecedores() {
               <h2 className="mx-auto mb-4 max-w-2xl text-center text-2xl font-bold tracking-tight sm:text-3xl">
                 {sp.ofertaTitle || DEFAULT.ofertaTitle}
               </h2>
-              <p className="mx-auto mb-12 max-w-xl text-center text-muted-foreground">
+              <p className="mx-auto mb-12 max-w-xl text-center text-foreground">
                 {sp.ofertaSubtitle || DEFAULT.ofertaSubtitle}
               </p>
 
@@ -350,14 +350,14 @@ export default function Oferta5Fornecedores() {
                         Fornecedor {f.numero ?? idx + 1}
                       </p>
                       <h3 className="mt-1 font-semibold leading-snug">{f.diferencial}</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">{f.detalhe}</p>
+                      <p className="mt-1 text-sm text-foreground">{f.detalhe}</p>
                     </div>
                   </div>
                 ))}
                 <div className="glass-card glow-primary flex flex-col items-center justify-center rounded-2xl p-6 text-center">
                   <Lock className="mb-3 h-6 w-6 text-accent" />
                   <p className="text-lg font-bold">Ainda bloqueado</p>
-                  <p className="mt-1.5 text-sm text-muted-foreground">
+                  <p className="mt-1.5 text-sm text-foreground">
                     O nome e o contato de cada fornecedor só aparecem depois da confirmação. Cada dia que passa é
                     mais um dia arriscando comprar de quem não é confiável.
                   </p>
@@ -371,7 +371,7 @@ export default function Oferta5Fornecedores() {
         <section className="border-t border-border/40 pb-20 pt-16">
           <div className="container mx-auto px-4">
             <div className="glass-card glow-primary mx-auto max-w-2xl rounded-3xl p-8 text-center sm:p-12">
-              <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <p className="text-sm font-medium uppercase tracking-wide text-foreground">
                 Valor já revelado ao vivo
               </p>
               <p className="mt-3 text-lg leading-relaxed">{sp.valorAncoragemTexto || DEFAULT.valorAncoragemTexto}</p>
@@ -383,8 +383,8 @@ export default function Oferta5Fornecedores() {
                       key={idx}
                       className="flex items-center justify-between border-b border-border/40 py-2.5 text-sm"
                     >
-                      <span className="text-muted-foreground">Fornecedor {f.numero ?? idx + 1}</span>
-                      <span className="text-muted-foreground line-through">{f.valor}</span>
+                      <span className="text-foreground">Fornecedor {f.numero ?? idx + 1}</span>
+                      <span className="text-foreground line-through">{f.valor}</span>
                     </div>
                   ))}
                   <div className="flex items-center justify-between pt-3 text-base font-semibold">
@@ -401,7 +401,7 @@ export default function Oferta5Fornecedores() {
               ) : (
                 <div className="my-8 flex items-center justify-center gap-4 sm:gap-8">
                   <div>
-                    <p className="text-sm text-muted-foreground line-through">
+                    <p className="text-sm text-foreground line-through">
                       De {sp.precoDe || DEFAULT.precoDe}
                     </p>
                     <p className="text-4xl font-bold sm:text-5xl">
@@ -433,7 +433,7 @@ export default function Oferta5Fornecedores() {
               <div className="glass-card rounded-2xl p-8">
                 <Quote className="mb-4 h-8 w-8 text-primary/60" />
                 <p className="text-lg leading-relaxed">"{sp.depoimentoTexto || DEFAULT.depoimentoTexto}"</p>
-                <p className="mt-4 text-sm text-muted-foreground">
+                <p className="mt-4 text-sm text-foreground">
                   — {sp.depoimentoAutor || DEFAULT.depoimentoAutor}
                 </p>
               </div>
@@ -462,7 +462,7 @@ export default function Oferta5Fornecedores() {
                     </div>
                     <div className={isLast ? "glass-card glow-primary flex-1 rounded-2xl p-5" : "flex-1 pt-1.5"}>
                       <h3 className={isLast ? "text-lg font-bold" : "font-semibold"}>{passo.titulo}</h3>
-                      {passo.texto && <p className="mt-1 text-sm text-muted-foreground">{passo.texto}</p>}
+                      {passo.texto && <p className="mt-1 text-sm text-foreground">{passo.texto}</p>}
                     </div>
                   </div>
                 );
@@ -495,7 +495,7 @@ export default function Oferta5Fornecedores() {
                   {loadingCheckout ? "Carregando..." : "Em breve"}
                 </button>
               )}
-              <p className="mt-4 text-xs text-muted-foreground">🔒 Pagamento seguro · Acesso liberado na hora</p>
+              <p className="mt-4 text-xs text-foreground">🔒 Pagamento seguro · Acesso liberado na hora</p>
             </div>
           </div>
         </section>
@@ -509,7 +509,7 @@ export default function Oferta5Fornecedores() {
                 {faq.map((f, idx) => (
                   <div key={idx} className="glass-card rounded-xl p-5">
                     <p className="font-semibold">{f.pergunta}</p>
-                    <p className="mt-1.5 text-sm text-muted-foreground">{f.resposta}</p>
+                    <p className="mt-1.5 text-sm text-foreground">{f.resposta}</p>
                   </div>
                 ))}
               </div>
