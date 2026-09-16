@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Quote,
   ImageOff,
+  Wallet,
 } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
@@ -89,6 +90,7 @@ interface SalesPage {
   precoDe?: string;
   precoPor?: string;
   valorRodape?: string;
+  valorRodapeTitulo?: string;
   depoimentoTexto?: string;
   depoimentoAutor?: string;
   garantiaTitulo?: string;
@@ -128,6 +130,7 @@ const DEFAULT: Required<SalesPage> = {
   valorAncoragemTexto: "Só o fornecedor principal da lista já foi avaliado publicamente em R$ 10.000 de valor percebido.",
   precoDe: "R$ 997",
   precoPor: "R$ 47",
+  valorRodapeTitulo: "Cabe fácil no seu orçamento",
   valorRodape:
     "Pra quem fatura R$ 10 mil/mês ou mais, isso representa menos de 0,5% do seu faturamento — pra nunca mais depender de sorte na hora de escolher fornecedor.",
   depoimentoTexto: "Só com essa lista eu economizei mais de R$ 20 mil comprando direto na fonte certa, sem pagar por intermediário.",
@@ -393,8 +396,18 @@ export default function Oferta5Fornecedores() {
                   </div>
                 </div>
               )}
+            </div>
 
-              <p className="text-sm text-muted-foreground">{valorRodape}</p>
+            {/* Card separado, com mais destaque que um texto de rodapé —
+                reforça sozinho o argumento de "cabe no seu bolso". */}
+            <div className="mx-auto mt-6 max-w-2xl">
+              <div className="glass-card rounded-2xl p-8">
+                <Wallet className="mb-4 h-8 w-8 text-accent" />
+                <p className="text-xl font-bold leading-snug">
+                  {sp.valorRodapeTitulo || DEFAULT.valorRodapeTitulo}
+                </p>
+                <p className="mt-3 text-base leading-relaxed text-foreground">{valorRodape}</p>
+              </div>
             </div>
           </div>
         </section>
