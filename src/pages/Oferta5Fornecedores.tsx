@@ -249,16 +249,13 @@ export default function Oferta5Fornecedores() {
                 {sp.headlineSubtitle || DEFAULT.headlineSubtitle}
               </p>
 
-              {/* Callback da resposta dela na última pergunta do quiz ("o que
-                  isso mudaria pra você") — só aparece se a personalização
-                  existir (veio do quiz de verdade, não acesso direto). */}
-              {personalization.mudaria && (
-                <div className="animate-fade-up-delay-3 mx-auto mt-6 max-w-xl rounded-2xl border border-primary/20 bg-primary/5 px-5 py-4">
-                  <p className="text-sm leading-relaxed text-foreground">
-                    Você mesma disse que isso mudaria: <span className="font-semibold">"{personalization.mudaria}"</span> — é exatamente isso que essa lista entrega.
-                  </p>
-                </div>
-              )}
+              {/* Callback da resposta da última pergunta ("o que isso
+                  mudaria pra você") desativado em 2026-09-16 — citar a opção
+                  marcada ao pé da letra (ex: "Tudo isso junto") soou robótico
+                  e não persuasivo. Ideia pra retomar depois: gerar a frase
+                  via IA a partir da resposta, em vez de citação literal. O
+                  dado (personalization.mudaria) continua sendo salvo pelo
+                  Quiz.tsx, só não é mais exibido aqui. */}
             </div>
           </div>
         </section>
