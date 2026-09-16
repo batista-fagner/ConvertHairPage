@@ -325,8 +325,11 @@ export default function Oferta5Fornecedores() {
                 ))}
                 <div className="glass-card glow-primary flex flex-col items-center justify-center rounded-2xl p-6 text-center">
                   <Lock className="mb-3 h-6 w-6 text-accent" />
-                  <p className="text-sm font-semibold">Nome e contato de cada um</p>
-                  <p className="mt-1 text-sm text-muted-foreground">liberados após a confirmação do pagamento</p>
+                  <p className="text-lg font-bold">Ainda bloqueado</p>
+                  <p className="mt-1.5 text-sm text-muted-foreground">
+                    O nome e o contato de cada fornecedor só aparecem depois da confirmação. Cada dia que passa é
+                    mais um dia arriscando comprar de quem não é confiável.
+                  </p>
                 </div>
               </div>
             </div>
