@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  ShieldCheck,
+  Trophy,
   AlertTriangle,
   CheckCircle2,
   Lock,
@@ -71,6 +71,11 @@ interface Faq {
   resposta: string;
 }
 
+interface JornadaPasso {
+  titulo: string;
+  texto?: string;
+}
+
 // Conteúdo editável no Quiz Builder do CRM (aba Quizzes → "5 Fornecedores" →
 // Etapa 4 "Página de venda"). Layout/cores ficam fixos aqui no código; só o
 // TEXTO/FOTOS/VALORES vêm do quiz. Os valores abaixo são só fallback — usados
@@ -95,6 +100,7 @@ interface SalesPage {
   depoimentoAutor?: string;
   garantiaTitulo?: string;
   garantiaTexto?: string;
+  jornada?: JornadaPasso[];
   ctaTitulo?: string;
   ctaBotaoLabel?: string;
   faq?: Faq[];
@@ -138,6 +144,13 @@ const DEFAULT: Required<SalesPage> = {
   garantiaTitulo: "Contato direto, sem enrolação",
   garantiaTexto:
     "Você recebe o nome e o WhatsApp de cada um dos 5 fornecedores. Se algum não responder ou não bater com o combinado, você fala com a gente e a gente resolve.",
+  jornada: [
+    { titulo: "Você garante sua vaga", texto: "Confirma o pagamento e o acesso libera na hora." },
+    { titulo: "Recebe os 5 contatos", texto: "Nome e WhatsApp de cada fornecedor chegam direto pra você." },
+    { titulo: "Fala direto com eles", texto: "Sem intermediário, você negocia preço e condição na hora." },
+    { titulo: "Compra com fornecedor validado", texto: "Cabelo de verdade, sem risco de golpe." },
+    { titulo: "Vende com mais confiança e mais lucro" },
+  ],
   ctaTitulo: "Pare de arriscar com fornecedor. Comece hoje com quem já é validado.",
   ctaBotaoLabel: "Quero os 5 fornecedores agora",
   faq: [
@@ -218,6 +231,7 @@ export default function Oferta5Fornecedores() {
   const criterios = pick(sp.criterios, DEFAULT.criterios);
   const fornecedores = pick(sp.fornecedores, DEFAULT.fornecedores);
   const faq = pick(sp.faq, DEFAULT.faq);
+  const jornada = pick(sp.jornada, DEFAULT.jornada);
 
   // Escada de valor — só aparece se pelo menos 1 fornecedor tiver "valor"
   // preenchido no builder; sem isso, cai pro bloco simples de/por de sempre
@@ -427,15 +441,32 @@ export default function Oferta5Fornecedores() {
           </div>
         </section>
 
-        {/* ── 7. Garantia ── */}
+        {/* ── 7. Jornada pós-compra ── */}
         <section className="border-t border-border/40 pb-20 pt-16">
           <div className="container mx-auto px-4">
-            <div className="mx-auto flex max-w-2xl items-start gap-4 rounded-2xl border border-accent/30 bg-accent/5 p-6">
-              <ShieldCheck className="h-8 w-8 shrink-0 text-accent" />
-              <div>
-                <h3 className="font-semibold">{sp.garantiaTitulo || DEFAULT.garantiaTitulo}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{sp.garantiaTexto || DEFAULT.garantiaTexto}</p>
-              </div>
+            <h2 className="mb-10 text-center text-2xl font-bold tracking-tight sm:text-3xl">
+              O que acontece depois que você garante sua vaga
+            </h2>
+            <div className="mx-auto max-w-md">
+              {jornada.map((passo, idx) => {
+                const isLast = idx === jornada.length - 1;
+                return (
+                  <div key={idx} className="relative flex gap-4 pb-8 last:pb-0">
+                    {!isLast && <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-border" />}
+                    <div
+                      className={`z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                        isLast ? "bg-accent text-accent-foreground" : "border border-primary/30 bg-primary/15 text-primary"
+                      }`}
+                    >
+                      {isLast ? <Trophy className="h-5 w-5" /> : idx + 1}
+                    </div>
+                    <div className={isLast ? "glass-card glow-primary flex-1 rounded-2xl p-5" : "flex-1 pt-1.5"}>
+                      <h3 className={isLast ? "text-lg font-bold" : "font-semibold"}>{passo.titulo}</h3>
+                      {passo.texto && <p className="mt-1 text-sm text-muted-foreground">{passo.texto}</p>}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
