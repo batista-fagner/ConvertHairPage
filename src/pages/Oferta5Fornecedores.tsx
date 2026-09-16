@@ -299,15 +299,14 @@ export default function Oferta5Fornecedores() {
                 {sp.ofertaSubtitle || DEFAULT.ofertaSubtitle}
               </p>
 
-              <div className="mb-12 flex flex-wrap justify-center gap-3">
+              <div className="mb-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {criterios.map((c, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-xs font-medium text-accent"
-                  >
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    {c}
-                  </span>
+                  <div key={idx} className="glass-card rounded-2xl p-6">
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15">
+                      <CheckCircle2 className="h-5 w-5 text-accent" />
+                    </div>
+                    <p className="text-sm font-semibold leading-snug">{c}</p>
+                  </div>
                 ))}
               </div>
 
