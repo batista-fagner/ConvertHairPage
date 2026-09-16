@@ -376,9 +376,11 @@ export default function Quiz() {
 
   return (
     <PhoneFrame>
-      <div className="px-4 pt-4">
-        <ProgressBar percent={progressPercent} />
-      </div>
+      {step.kind !== "presentation" && (
+        <div className="px-4 pt-4">
+          <ProgressBar percent={progressPercent} />
+        </div>
+      )}
 
       {step.kind === "presentation" && (
         <div className="px-4 pt-4 pb-8 flex flex-col gap-4">
