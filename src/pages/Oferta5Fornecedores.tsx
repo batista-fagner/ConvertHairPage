@@ -48,11 +48,16 @@ function formatPct(n: number): string {
   return Number.isInteger(n) ? String(n) : String(n).replace(".", ",");
 }
 
+function formatBRL(n: number): string {
+  return `R$ ${n.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+}
+
 interface Fornecedor {
   numero: number;
   diferencial: string;
   detalhe: string;
   imagem?: string;
+  valor?: string;
 }
 
 interface Dor {
@@ -211,6 +216,15 @@ export default function Oferta5Fornecedores() {
   const fornecedores = pick(sp.fornecedores, DEFAULT.fornecedores);
   const faq = pick(sp.faq, DEFAULT.faq);
 
+  // Escada de valor — só aparece se pelo menos 1 fornecedor tiver "valor"
+  // preenchido no builder; sem isso, cai pro bloco simples de/por de sempre
+  // (não quebra quiz nenhum que ainda não usa esse campo novo).
+  const fornecedoresComValor = fornecedores
+    .map((f) => ({ ...f, valorNum: parsePrice(f.valor) }))
+    .filter((f): f is Fornecedor & { valorNum: number } => f.valorNum !== null);
+  const somaPercebida = fornecedoresComValor.reduce((sum, f) => sum + f.valorNum, 0);
+  const hasValueStack = fornecedoresComValor.length > 0;
+
   // Personaliza a ancoragem de valor com a faixa de faturamento que ELA
   // respondeu no quiz — cai pro texto genérico do builder se não tiver o
   // dado (acessou a página direto, sem passar pelo quiz) ou a faixa não bater
@@ -344,16 +358,42 @@ export default function Oferta5Fornecedores() {
                 Valor já revelado ao vivo
               </p>
               <p className="mt-3 text-lg leading-relaxed">{sp.valorAncoragemTexto || DEFAULT.valorAncoragemTexto}</p>
-              <div className="my-8 flex items-center justify-center gap-4 sm:gap-8">
-                <div>
-                  <p className="text-sm text-muted-foreground line-through">
-                    De {sp.precoDe || DEFAULT.precoDe}
-                  </p>
-                  <p className="text-4xl font-bold sm:text-5xl">
-                    <span className="gradient-text">{sp.precoPor || DEFAULT.precoPor}</span>
-                  </p>
+
+              {hasValueStack ? (
+                <div className="my-8 mx-auto max-w-sm text-left">
+                  {fornecedoresComValor.map((f, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between border-b border-border/40 py-2.5 text-sm"
+                    >
+                      <span className="text-muted-foreground">Fornecedor {f.numero ?? idx + 1}</span>
+                      <span className="text-muted-foreground line-through">{f.valor}</span>
+                    </div>
+                  ))}
+                  <div className="flex items-center justify-between pt-3 text-base font-semibold">
+                    <span>Valor total</span>
+                    <span className="line-through">{formatBRL(somaPercebida)}</span>
+                  </div>
+                  <div className="mt-4 flex items-center justify-between rounded-2xl bg-primary/10 px-4 py-3">
+                    <span className="text-sm font-medium">Seu investimento hoje</span>
+                    <span className="text-2xl font-bold">
+                      <span className="gradient-text">{sp.precoPor || DEFAULT.precoPor}</span>
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="my-8 flex items-center justify-center gap-4 sm:gap-8">
+                  <div>
+                    <p className="text-sm text-muted-foreground line-through">
+                      De {sp.precoDe || DEFAULT.precoDe}
+                    </p>
+                    <p className="text-4xl font-bold sm:text-5xl">
+                      <span className="gradient-text">{sp.precoPor || DEFAULT.precoPor}</span>
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <p className="text-sm text-muted-foreground">{valorRodape}</p>
             </div>
           </div>
