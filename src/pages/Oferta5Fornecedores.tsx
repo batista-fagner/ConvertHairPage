@@ -305,7 +305,7 @@ export default function Oferta5Fornecedores() {
                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15">
                       <CheckCircle2 className="h-5 w-5 text-accent" />
                     </div>
-                    <p className="text-sm font-semibold leading-snug">{c}</p>
+                    <p className="text-lg font-bold leading-snug">{c}</p>
                   </div>
                 ))}
               </div>
