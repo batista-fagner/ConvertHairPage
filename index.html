@@ -16,8 +16,9 @@
     <meta name="twitter:description" content="Descubra como vender cabelo todo santo dia. Participe do Workshop gratuito.">
     <!-- Meta Pixel loader — só carrega o SDK (window.fbq), sem init de pixel
     fixo. O pixel antigo (1313939170331855) foi removido por não ter propósito
-    ativo (não estava ligado a nenhuma campanha em uso); o Quiz.tsx faz seu
-    próprio fbq('init', ...) com o pixel dedicado de cada campanha. -->
+    ativo (não estava ligado a nenhuma campanha em uso). Cada página que
+    vende (ex: Oferta5Fornecedores.tsx) faz seu próprio fbq('init', ...) com
+    o fbPixelId dedicado do quiz, assim que o /quiz/:slug responde. -->
     <script>
       !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;

@@ -207,13 +207,22 @@ export default function Oferta5Fornecedores() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (window.fbq) window.fbq("track", "ViewContent");
 
     fetch(`${API_URL}/quiz/${QUIZ_SLUG}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         setCheckoutUrl(data?.checkoutUrl || null);
         setSalesPage(data?.salesPage || null);
+        // Pixel dedicado do quiz (ver Quiz.entity.fbPixelId) — o SDK do fbevents.js
+        // já é carregado global no index.html, mas nenhuma página até hoje
+        // chamava fbq('init', ...), então os fbq('track', ...) abaixo nunca
+        // disparavam de verdade. Sem fbPixelId configurado no quiz, mantém
+        // desligado (não inicializa com pixel nenhum).
+        if (data?.fbPixelId && window.fbq) {
+          window.fbq("init", data.fbPixelId);
+          window.fbq("track", "PageView");
+          window.fbq("track", "ViewContent");
+        }
       })
       .catch(() => {
         setCheckoutUrl(null);
