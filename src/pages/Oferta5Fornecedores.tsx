@@ -289,6 +289,14 @@ export default function Oferta5Fornecedores() {
                 {sp.headlineSubtitle || DEFAULT.headlineSubtitle}
               </p>
 
+              <a
+                href="#oferta"
+                className="group mt-8 inline-flex animate-fade-up-delay-2 items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
+              >
+                {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
+                <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+              </a>
+
               {/* Callback da resposta da última pergunta ("o que isso
                   mudaria pra você") desativado em 2026-09-16 — citar a opção
                   marcada ao pé da letra (ex: "Tudo isso junto") soou robótico
@@ -323,7 +331,7 @@ export default function Oferta5Fornecedores() {
         </section>
 
         {/* ── 3/4. Oferta + bullets dos fornecedores ── */}
-        <section className="border-t border-border/40 pb-20 pt-16">
+        <section id="oferta" className="border-t border-border/40 pb-20 pt-16 scroll-mt-6">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-5xl">
               <div className="mb-4 text-center">
@@ -371,6 +379,26 @@ export default function Oferta5Fornecedores() {
                     mais um dia arriscando comprar de quem não é confiável.
                   </p>
                 </div>
+              </div>
+
+              <div className="mt-12 text-center">
+                {checkoutUrl ? (
+                  <a
+                    href={checkoutUrl}
+                    onClick={handleBuyClick}
+                    className="group inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
+                  >
+                    {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
+                    <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-muted px-10 py-4 text-base font-bold text-muted-foreground"
+                  >
+                    {loadingCheckout ? "Carregando..." : "Em breve"}
+                  </button>
+                )}
               </div>
             </div>
           </div>
