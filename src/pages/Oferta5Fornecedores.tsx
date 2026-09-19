@@ -264,6 +264,17 @@ export default function Oferta5Fornecedores() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
+      {/* Fita de urgência — mesmo padrão do ticker da Index.tsx */}
+      <div className="relative z-50 w-full overflow-hidden bg-yellow-400 py-2">
+        <div className="flex animate-marquee whitespace-nowrap">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <span key={i} className="mx-8 text-sm font-bold tracking-wide text-gray-900">
+              ⚡ OFERTA POR TEMPO LIMITADO: o valor de {sp.precoPor || DEFAULT.precoPor} pode subir a qualquer momento — garanta antes que mude ⚡
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Background ambiente — mesmo padrão visual do resto do site */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-primary/10 blur-[120px]" />
@@ -447,6 +458,26 @@ export default function Oferta5Fornecedores() {
                   </div>
                 </div>
               )}
+
+              <div className="mt-2">
+                {checkoutUrl ? (
+                  <a
+                    href={checkoutUrl}
+                    onClick={handleBuyClick}
+                    className="group inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
+                  >
+                    {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
+                    <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-muted px-10 py-4 text-base font-bold text-muted-foreground"
+                  >
+                    {loadingCheckout ? "Carregando..." : "Em breve"}
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Card separado, com mais destaque que um texto de rodapé —
