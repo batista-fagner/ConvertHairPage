@@ -302,7 +302,7 @@ export default function Oferta5Fornecedores() {
 
               <a
                 href="#valor"
-                className="group mt-8 inline-flex animate-fade-up-delay-2 items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
+                className="group mt-8 inline-flex animate-soft-pulse items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
               >
                 {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
