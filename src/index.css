@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
-
+/* Fonte movida pro <link> em index.html — @import aqui forçava o navegador
+   a esperar o CSS inteiro carregar antes de sequer descobrir a fonte. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Fonte carregada direto no HTML (não via @import no CSS) — o navegador
+    descobre e baixa em paralelo com o resto, em vez de esperar o CSS inteiro
+    carregar pra só então descobrir a fonte. Isso tirou ~750ms de bloqueio de
+    renderização (PageSpeed Insights, 2026-09-19). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+    />
     <title>Workshop — Como Vender Cabelo Todo Santo Dia</title>
     <meta name="description" content="Descubra como vender cabelo todo santo dia. Participe do Workshop gratuito.">
     <meta name="author" content="Workshop Vender Cabelo" />
