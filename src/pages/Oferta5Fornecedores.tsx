@@ -269,7 +269,7 @@ export default function Oferta5Fornecedores() {
         <div className="flex animate-marquee whitespace-nowrap">
           {Array.from({ length: 8 }).map((_, i) => (
             <span key={i} className="mx-8 text-sm font-bold tracking-wide text-gray-900">
-              ⚡ OFERTA POR TEMPO LIMITADO: o valor de {sp.precoPor || DEFAULT.precoPor} pode subir a qualquer momento — garanta antes que mude ⚡
+              🔥 ATENÇÃO: acesso aos 5 fornecedores validados disponível por tempo limitado 🔥
             </span>
           ))}
         </div>
