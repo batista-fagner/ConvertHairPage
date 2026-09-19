@@ -301,7 +301,7 @@ export default function Oferta5Fornecedores() {
               </p>
 
               <a
-                href="#oferta"
+                href="#valor"
                 className="group mt-8 inline-flex animate-fade-up-delay-2 items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
               >
                 {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
@@ -416,7 +416,7 @@ export default function Oferta5Fornecedores() {
         </section>
 
         {/* ── 5. Ancoragem de valor ── */}
-        <section className="border-t border-border/40 pb-20 pt-16">
+        <section id="valor" className="border-t border-border/40 pb-20 pt-16 scroll-mt-6">
           <div className="container mx-auto px-4">
             <div className="glass-card glow-primary mx-auto max-w-2xl rounded-3xl p-8 text-center sm:p-12">
               <p className="text-sm font-medium uppercase tracking-wide text-foreground">
