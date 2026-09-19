@@ -393,23 +393,13 @@ export default function Oferta5Fornecedores() {
               </div>
 
               <div className="mt-12 text-center">
-                {checkoutUrl ? (
-                  <a
-                    href={checkoutUrl}
-                    onClick={handleBuyClick}
-                    className="group inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
-                  >
-                    {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
-                    <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                  </a>
-                ) : (
-                  <button
-                    disabled
-                    className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-muted px-10 py-4 text-base font-bold text-muted-foreground"
-                  >
-                    {loadingCheckout ? "Carregando..." : "Em breve"}
-                  </button>
-                )}
+                <a
+                  href="#valor"
+                  className="group inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
+                >
+                  {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
+                  <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                </a>
               </div>
             </div>
           </div>
@@ -464,7 +454,7 @@ export default function Oferta5Fornecedores() {
                   <a
                     href={checkoutUrl}
                     onClick={handleBuyClick}
-                    className="group inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
+                    className="group inline-flex animate-cta-pulse items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
                   >
                     {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
                     <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
@@ -546,23 +536,13 @@ export default function Oferta5Fornecedores() {
               <h2 className="mb-6 text-2xl font-bold tracking-tight sm:text-3xl">
                 {sp.ctaTitulo || DEFAULT.ctaTitulo}
               </h2>
-              {checkoutUrl ? (
-                <a
-                  href={checkoutUrl}
-                  onClick={handleBuyClick}
-                  className="group inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
-                >
-                  {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
-                  <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                </a>
-              ) : (
-                <button
-                  disabled
-                  className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-muted px-10 py-4 text-base font-bold text-muted-foreground"
-                >
-                  {loadingCheckout ? "Carregando..." : "Em breve"}
-                </button>
-              )}
+              <a
+                href="#valor"
+                className="group inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
+              >
+                {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
+                <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+              </a>
               <p className="mt-4 text-xs text-foreground">🔒 Pagamento seguro · Acesso liberado na hora</p>
             </div>
           </div>
