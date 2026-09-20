@@ -39,6 +39,24 @@ function readPersonalization(slug: string): Personalization {
   }
 }
 
+// Gravado pelo Quiz.tsx no localStorage (mesma origem, sobrevive ao
+// redirecionamento pra cá) — colado na URL de checkout pra o pixel nativo da
+// Greenn (configurado em 2026-09-20) conseguir montar o _fbc de verdade e
+// atribuir a venda ao anúncio certo. Sem isso a Greenn recebe o clique de
+// compra sem nenhum dado de clique do anúncio original.
+function appendFbclid(url: string | null): string | null {
+  if (!url) return url;
+  let fbclid: string | null = null;
+  try {
+    fbclid = localStorage.getItem("fbclid");
+  } catch {
+    return url;
+  }
+  if (!fbclid) return url;
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}fbclid=${encodeURIComponent(fbclid)}`;
+}
+
 function parsePrice(value?: string): number | null {
   if (!value) return null;
   const n = parseFloat(value.replace(/[^\d,.-]/g, "").replace(",", "."));
@@ -234,6 +252,8 @@ export default function Oferta5Fornecedores() {
   function handleBuyClick() {
     if (window.fbq) window.fbq("track", "InitiateCheckout");
   }
+
+  const checkoutUrlWithFbclid = appendFbclid(checkoutUrl);
 
   const sp = salesPage || {};
   const dores = pick(sp.dores, DEFAULT.dores);
@@ -450,9 +470,9 @@ export default function Oferta5Fornecedores() {
               )}
 
               <div className="mt-2">
-                {checkoutUrl ? (
+                {checkoutUrlWithFbclid ? (
                   <a
-                    href={checkoutUrl}
+                    href={checkoutUrlWithFbclid}
                     onClick={handleBuyClick}
                     className="group inline-flex animate-cta-pulse items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
                   >
