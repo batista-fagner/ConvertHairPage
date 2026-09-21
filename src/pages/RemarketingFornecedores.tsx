@@ -85,6 +85,19 @@ export default function RemarketingFornecedores() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    // Captura o fbclid do clique NESSE anúncio (remarketing) — sem isso, só
+    // sobrava o fbclid antigo (da visita original ao quiz), o que atribuiria
+    // a venda ao anúncio errado. Mesmo padrão do Quiz.tsx/Index.tsx.
+    const fbclidFromUrl = new URLSearchParams(window.location.search).get("fbclid");
+    if (fbclidFromUrl) {
+      try {
+        localStorage.setItem("fbclid", fbclidFromUrl);
+      } catch {
+        // localStorage indisponível — appendFbclid só não vai achar nada, sem quebrar nada.
+      }
+    }
+
     fetch(`${API_URL}/quiz/${QUIZ_SLUG}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data: QuizData) => {
