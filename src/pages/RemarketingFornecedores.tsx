@@ -139,8 +139,8 @@ export default function RemarketingFornecedores() {
                 Você já deu o primeiro passo
               </div>
               <h1 className="mb-6 text-3xl font-bold leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl text-balance">
-                Você respondeu que já caiu (ou tem medo de cair) em{" "}
-                <span className="gradient-gold">golpe de fornecedor</span> de cabelo. Isso ainda não foi resolvido.
+                O golpe de fornecedor te custou dinheiro. A lista que{" "}
+                <span className="gradient-gold">aumenta seu faturamento</span> ainda tá disponível.
               </h1>
               <p className="mx-auto max-w-xl text-lg leading-relaxed text-white/70">
                 Os 5 fornecedores validados que iam resolver isso ainda estão disponíveis — mas só até essa condição
@@ -164,7 +164,8 @@ export default function RemarketingFornecedores() {
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-3xl">
               <h2 className="mb-3 text-center text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                Só falta 1 passo: <span className="gradient-gold">garantir a lista</span> antes que feche
+                Só falta 1 passo para <span className="gradient-gold">aumentar o seu faturamento</span>: garantir a
+                lista antes que feche
               </h2>
               <p className="mx-auto mb-10 max-w-xl text-center text-white/70">
                 Enquanto você decide, quem já garantiu está negociando direto com os 5 fornecedores validados — sem
@@ -205,6 +206,22 @@ export default function RemarketingFornecedores() {
                   <span className="text-lg text-white/40 line-through">{precoDe}</span>
                   <span className="gradient-gold text-4xl font-bold sm:text-5xl">{precoPor}</span>
                 </div>
+
+                <div className="mb-6 space-y-2.5 text-left">
+                  {[
+                    "Nome e WhatsApp dos 5 fornecedores validados, liberado na hora",
+                    "Cabelo 100% humano, fios inteiros, pontas cheias — nada de mistura",
+                    "Preço com margem boa pra você vender e aumentar o faturamento",
+                    "Risco zero do golpe que você já viveu (ou teme viver)",
+                    "Contato direto com cada fornecedor, sem intermediário",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-2.5">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#d4af37]" />
+                      <p className="text-sm leading-snug text-white/85">{item}</p>
+                    </div>
+                  ))}
+                </div>
+
                 <p className="mb-6 flex items-center justify-center gap-2 text-sm text-[#f4e5a1]">
                   <AlertTriangle className="h-4 w-4" />
                   Só enquanto essa condição estiver no ar
