@@ -23,6 +23,12 @@ interface QuizData {
   fbPixelId?: string;
 }
 
+// Checkout dedicado da Greenn pra essa página (produto/oferta próprio, com
+// contador de escassez configurado lá) — não é o mesmo checkoutUrl da página
+// de venda original, de propósito: permite separar no relatório da Greenn
+// quem comprou pelo remarketing de quem comprou pelo funil frio.
+const REMARKETING_CHECKOUT_URL = "https://payfast.greenn.com.br/redirect/320262";
+
 const DEFAULT_PRECO_DE = "R$ 997";
 const DEFAULT_PRECO_POR = "R$ 47";
 const DEFAULT_FORNECEDORES: Fornecedor[] = [
@@ -97,7 +103,7 @@ export default function RemarketingFornecedores() {
     if (window.fbq) window.fbq("track", "InitiateCheckout");
   }
 
-  const checkoutUrl = appendFbclid(quiz?.checkoutUrl || null);
+  const checkoutUrl = appendFbclid(REMARKETING_CHECKOUT_URL);
   const precoDe = quiz?.salesPage?.precoDe || DEFAULT_PRECO_DE;
   const precoPor = quiz?.salesPage?.precoPor || DEFAULT_PRECO_POR;
   const fornecedores = quiz?.salesPage?.fornecedores?.length ? quiz.salesPage.fornecedores : DEFAULT_FORNECEDORES;
