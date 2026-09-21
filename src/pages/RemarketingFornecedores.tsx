@@ -148,7 +148,7 @@ export default function RemarketingFornecedores() {
               </p>
               <div className="mt-8 flex justify-center">
                 <a
-                  href="#oferta"
+                  href="#preco"
                   className="group inline-flex animate-cta-pulse items-center gap-2 rounded-xl bg-gradient-to-r from-[#f4e5a1] via-[#d4af37] to-[#b8860b] px-8 py-3.5 text-base font-bold text-[#1a1206] transition-all duration-300 hover:brightness-110"
                 >
                   Quero garantir agora
@@ -199,7 +199,7 @@ export default function RemarketingFornecedores() {
                 ))}
               </div>
 
-              <div className="glow-gold mx-auto max-w-md rounded-3xl border border-[#d4af37]/30 bg-white/[0.03] p-8 text-center">
+              <div id="preco" className="glow-gold mx-auto max-w-md scroll-mt-6 rounded-3xl border border-[#d4af37]/30 bg-white/[0.03] p-8 text-center">
                 <p className="text-sm font-medium uppercase tracking-wide text-white/60">Sua condição</p>
                 <div className="my-4 flex items-center justify-center gap-4">
                   <span className="text-lg text-white/40 line-through">{precoDe}</span>
