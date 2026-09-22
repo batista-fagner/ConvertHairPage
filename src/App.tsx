@@ -11,6 +11,7 @@ const Result = lazy(() => import("./pages/Result.tsx"));
 const Quiz = lazy(() => import("./pages/Quiz.tsx"));
 const Oferta5Fornecedores = lazy(() => import("./pages/Oferta5Fornecedores.tsx"));
 const RemarketingFornecedores = lazy(() => import("./pages/RemarketingFornecedores.tsx"));
+const RemarketingGrupo = lazy(() => import("./pages/RemarketingGrupo.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 // QueryClientProvider/Toaster/Sonner/TooltipProvider removidos em 2026-09-19 —
@@ -27,6 +28,7 @@ const App = () => (
         <Route path="/q/:slug" element={<Quiz />} />
         <Route path="/oferta/5-fornecedores" element={<Oferta5Fornecedores />} />
         <Route path="/remarketing/5-fornecedores" element={<RemarketingFornecedores />} />
+        <Route path="/remarketing/grupo-5-fornecedores" element={<RemarketingGrupo />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
