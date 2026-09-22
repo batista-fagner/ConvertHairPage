@@ -39,17 +39,30 @@ const DEFAULT_FORNECEDORES: Fornecedor[] = [
   { numero: 5, diferencial: "Referência no mercado", detalhe: "Mais de 30 anos de experiência e confiança" },
 ];
 
-function appendFbclid(url: string | null): string | null {
+const TRACKING_KEYS = ["fbclid", "utm_source", "utm_medium", "utm_campaign"] as const;
+
+// Cola fbclid/UTM (capturados da própria URL dessa página, salvos no
+// localStorage) na URL do checkout — mesma lógica pro fbclid (pixel nativo da
+// Greenn monta o _fbc) e pro UTM (a Greenn precisa ter "Metas" cadastradas
+// pra utm_source/utm_medium/utm_campaign pra devolver isso no saleMetas do
+// webhook — só assim o backend consegue gravar a origem no Lead, já que a
+// pessoa pode já ser lead antiga, ex: disparo de mensagem numa base/grupo).
+function appendTracking(url: string | null): string | null {
   if (!url) return url;
-  let fbclid: string | null = null;
-  try {
-    fbclid = localStorage.getItem("fbclid");
-  } catch {
-    return url;
+  const params = new URLSearchParams();
+  for (const key of TRACKING_KEYS) {
+    let value: string | null = null;
+    try {
+      value = localStorage.getItem(key);
+    } catch {
+      continue;
+    }
+    if (value) params.set(key, value);
   }
-  if (!fbclid) return url;
+  const query = params.toString();
+  if (!query) return url;
   const separator = url.includes("?") ? "&" : "?";
-  return `${url}${separator}fbclid=${encodeURIComponent(fbclid)}`;
+  return `${url}${separator}${query}`;
 }
 
 function FornecedorImage({ imagem, numero }: { imagem?: string; numero: number }) {
@@ -86,15 +99,18 @@ export default function RemarketingFornecedores() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // Captura o fbclid do clique NESSE anúncio (remarketing) — sem isso, só
-    // sobrava o fbclid antigo (da visita original ao quiz), o que atribuiria
-    // a venda ao anúncio errado. Mesmo padrão do Quiz.tsx/Index.tsx.
-    const fbclidFromUrl = new URLSearchParams(window.location.search).get("fbclid");
-    if (fbclidFromUrl) {
+    // Captura fbclid/UTM do clique NESSE link específico (remarketing/disparo
+    // em grupo) — sem isso, só sobrava o fbclid antigo (da visita original ao
+    // quiz), o que atribuiria a venda ao clique errado. Mesmo padrão do
+    // Quiz.tsx/Index.tsx, estendido pra também guardar UTM (não só fbclid).
+    const urlParams = new URLSearchParams(window.location.search);
+    for (const key of TRACKING_KEYS) {
+      const value = urlParams.get(key);
+      if (!value) continue;
       try {
-        localStorage.setItem("fbclid", fbclidFromUrl);
+        localStorage.setItem(key, value);
       } catch {
-        // localStorage indisponível — appendFbclid só não vai achar nada, sem quebrar nada.
+        // localStorage indisponível — appendTracking só não vai achar nada, sem quebrar nada.
       }
     }
 
@@ -116,7 +132,7 @@ export default function RemarketingFornecedores() {
     if (window.fbq) window.fbq("track", "InitiateCheckout");
   }
 
-  const checkoutUrl = appendFbclid(REMARKETING_CHECKOUT_URL);
+  const checkoutUrl = appendTracking(REMARKETING_CHECKOUT_URL);
   const precoDe = quiz?.salesPage?.precoDe || DEFAULT_PRECO_DE;
   const precoPor = quiz?.salesPage?.precoPor || DEFAULT_PRECO_POR;
   const fornecedores = quiz?.salesPage?.fornecedores?.length ? quiz.salesPage.fornecedores : DEFAULT_FORNECEDORES;
