@@ -20,13 +20,14 @@ interface SalesPage {
 interface QuizData {
   checkoutUrl?: string;
   salesPage?: SalesPage;
-  fbPixelId?: string;
 }
 
-// Mesmo checkout dedicado da página de remarketing (RemarketingFornecedores)
-// — a diferenciação de campanha acontece via UTM (saleMetas), não via produto
-// separado na Greenn. Ver greenn.service.ts, extractUtmFromSaleMetas.
-const CHECKOUT_URL = "https://payfast.greenn.com.br/redirect/320262";
+// Produto duplicado na Greenn (aprovado 2026-09-23), de propósito SEM pixel
+// configurado — essa página não deve gerar nenhum evento pro Meta (nem CAPI,
+// já desativado, nem pixel nativo). Atribuição aqui é só via UTM/tag no CRM
+// (productMetas, ver greenn.service.ts), a venda orgânica desse disparo não
+// deve aparecer em lugar nenhum do Ads Manager.
+const CHECKOUT_URL = "https://payfast.greenn.com.br/redirect/321478";
 
 const DEFAULT_PRECO_DE = "R$ 997";
 const DEFAULT_PRECO_POR = "R$ 47";
@@ -107,21 +108,10 @@ export default function RemarketingGrupo() {
 
     fetch(`${API_URL}/quiz/${QUIZ_SLUG}`)
       .then((res) => (res.ok ? res.json() : null))
-      .then((data: QuizData) => {
-        setQuiz(data);
-        if (data?.fbPixelId && window.fbq) {
-          window.fbq("init", data.fbPixelId);
-          window.fbq("track", "PageView");
-          window.fbq("track", "ViewContent");
-        }
-      })
+      .then((data: QuizData) => setQuiz(data))
       .catch(() => setQuiz(null))
       .finally(() => setLoadingCheckout(false));
   }, []);
-
-  function handleBuyClick() {
-    if (window.fbq) window.fbq("track", "InitiateCheckout");
-  }
 
   const checkoutUrl = appendTracking(CHECKOUT_URL);
   const precoDe = quiz?.salesPage?.precoDe || DEFAULT_PRECO_DE;
@@ -132,7 +122,6 @@ export default function RemarketingGrupo() {
     checkoutUrl ? (
       <a
         href={checkoutUrl}
-        onClick={handleBuyClick}
         className={`group inline-flex animate-cta-pulse items-center gap-2 rounded-xl bg-gradient-to-r from-[#f4e5a1] via-[#d4af37] to-[#b8860b] px-10 py-4 text-base font-bold text-[#1a1206] transition-all duration-300 hover:brightness-110 ${className}`}
       >
         Quero os 5 fornecedores agora
