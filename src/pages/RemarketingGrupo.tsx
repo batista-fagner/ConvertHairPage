@@ -82,12 +82,11 @@ function FornecedorImage({ imagem, numero }: { imagem?: string; numero: number }
   );
 }
 
-// Página pro disparo de mensagem numa base/grupo do WhatsApp (pessoas que já
-// viram a página de venda original uma vez, mas não respostas de quiz — por
-// isso a copy do hero é a mesma da página de venda, não a versão "você
-// respondeu no quiz" do RemarketingFornecedores.tsx). Mesmo layout/paleta
-// dourada, criada em arquivo separado de propósito pra não alterar a página
-// de remarketing dos anúncios (2026-09-22).
+// Página pro disparo de mensagem numa base/grupo do WhatsApp (pessoas que não
+// responderam quiz, então não usa a copy "você respondeu no quiz" do
+// RemarketingFornecedores.tsx). Mesmo layout/paleta dourada, criada em arquivo
+// separado de propósito pra não alterar a página de remarketing dos anúncios
+// (2026-09-22). Copy do hero própria pra esse disparo, atualizada 2026-09-23.
 export default function RemarketingGrupo() {
   const [quiz, setQuiz] = useState<QuizData | null>(null);
   const [loadingCheckout, setLoadingCheckout] = useState(true);
@@ -144,7 +143,7 @@ export default function RemarketingGrupo() {
       </div>
 
       <main className="relative z-10 w-full overflow-x-hidden">
-        {/* ── 1. Hero — mesma copy da página de venda original ── */}
+        {/* ── 1. Hero ── */}
         <section className="pb-14 pt-16">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-2xl text-center">
@@ -153,8 +152,8 @@ export default function RemarketingGrupo() {
                 Oferta que você já viu
               </div>
               <h1 className="mb-6 text-3xl font-bold leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl text-balance">
-                Chega de arriscar com fornecedor. Receba os{" "}
-                <span className="gradient-gold">5 validados</span> por quem já testou na prática
+                Receba agora os <span className="gradient-gold">5 fornecedores validados</span>: cabelo 100% humano,
+                sem mistura, sem golpe.
               </h1>
               <p className="mx-auto max-w-xl text-lg leading-relaxed text-white/70">
                 Fornecedor errado é prejuízo garantido. Fornecedor certo é risco zero — cabelo de verdade, margem boa
