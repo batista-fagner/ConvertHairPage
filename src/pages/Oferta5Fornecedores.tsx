@@ -232,13 +232,20 @@ export default function Oferta5Fornecedores() {
         setCheckoutUrl(data?.checkoutUrl || null);
         setSalesPage(data?.salesPage || null);
         // Pixel dedicado do quiz (ver Quiz.entity.fbPixelId) — o SDK do fbevents.js
-        // já é carregado global no index.html, mas nenhuma página até hoje
-        // chamava fbq('init', ...), então os fbq('track', ...) abaixo nunca
-        // disparavam de verdade. Sem fbPixelId configurado no quiz, mantém
-        // desligado (não inicializa com pixel nenhum).
+        // já é carregado global no index.html. Sem fbPixelId configurado no
+        // quiz, mantém desligado (não inicializa com pixel nenhum).
         if (data?.fbPixelId && window.fbq) {
           window.fbq("init", data.fbPixelId);
-          window.fbq("track", "PageView");
+          // PageView removido de propósito em 2026-09-24: essa página só é
+          // alcançada por quem TERMINA o quiz (redirect pós-submit), então
+          // disparar PageView aqui contava como "visualização de página" do
+          // anúncio uma 2ª vez pra quem completa — inflava o connect rate
+          // (landing_page_view/clique) da campanha, misturando com a taxa de
+          // conclusão do quiz. O PageView real agora dispara certo na entrada
+          // do funil, via CAPI em QuizService.trackProgress (backend). Se
+          // precisar reativar (ex: essa página virar a própria entrada de
+          // algum anúncio), descomentar a linha abaixo.
+          // window.fbq("track", "PageView");
           window.fbq("track", "ViewContent");
         }
       })
