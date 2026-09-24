@@ -221,7 +221,18 @@ export default function Quiz() {
     fetch(`${API_URL}/quiz/${quiz.slug}/progress`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clickId: tracking.clickId, questionIndex, questionId, optionId }),
+      // fbclid/fbc/fbp só têm uso no backend na 1ª chamada da sessão (dispara
+      // o PageView via CAPI) — mandar em toda chamada é inofensivo e mais
+      // simples que só incluir na primeira.
+      body: JSON.stringify({
+        clickId: tracking.clickId,
+        questionIndex,
+        questionId,
+        optionId,
+        fbclid: tracking.fbclid,
+        fbc: tracking.fbc,
+        fbp: tracking.fbp,
+      }),
       keepalive: true,
     }).catch(() => {});
   }
