@@ -457,7 +457,14 @@ export default function Quiz() {
           )}
 
           <button
-            onClick={() => goToQuestion(0)}
+            onClick={() => {
+              // Clique real no botão — distinto do sendProgress(-1) que dispara
+              // sozinho ao carregar a página (ver useEffect acima). É a métrica
+              // de "conectou de verdade" que falta hoje no funil (P1 conta só
+              // quem RESPONDE, não quem chega a ver a pergunta).
+              sendProgress(0);
+              goToQuestion(0);
+            }}
             className="mt-2 w-full rounded-xl bg-emerald-600 hover:bg-emerald-500 transition py-4 text-sm font-bold uppercase tracking-wide animate-soft-pulse"
           >
             {quiz.presentation.buttonLabel || "Continuar"}
