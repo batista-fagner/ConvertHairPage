@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Trophy,
   AlertTriangle,
@@ -217,17 +217,56 @@ function pick<T>(value: T[] | undefined, fallback: T[]): T[] {
   return value && value.length > 0 ? value : fallback;
 }
 
-function Highlighted({ text, highlight }: { text: string; highlight?: string }) {
-  if (!highlight) return <>{text}</>;
-  const idx = text.indexOf(highlight);
-  if (idx === -1) return <>{text}</>;
-  return (
-    <>
-      {text.slice(0, idx)}
-      <span className="gradient-text">{highlight}</span>
-      {text.slice(idx + highlight.length)}
-    </>
-  );
+// "highlight" é configurável no builder (sales_page.headlineHighlight) e
+// ganha o gradiente dourado/roxo padrão. "secondaryHighlight" é um trecho
+// fixo do próprio título (não vem do builder) que precisa de destaque
+// visual diferente — sublinhado na cor do tema, sem competir com o
+// gradiente. Os dois podem coexistir e não podem se sobrepor no texto.
+function Highlighted({
+  text,
+  highlight,
+  secondaryHighlight,
+}: {
+  text: string;
+  highlight?: string;
+  secondaryHighlight?: string;
+}) {
+  type Match = { start: number; end: number; value: string; className: string };
+  const matches: Match[] = [];
+  if (highlight) {
+    const idx = text.indexOf(highlight);
+    if (idx !== -1) matches.push({ start: idx, end: idx + highlight.length, value: highlight, className: "gradient-text" });
+  }
+  if (secondaryHighlight) {
+    const idx = text.indexOf(secondaryHighlight);
+    if (idx !== -1) {
+      const overlaps = matches.some((m) => idx < m.end && idx + secondaryHighlight.length > m.start);
+      if (!overlaps) {
+        matches.push({
+          start: idx,
+          end: idx + secondaryHighlight.length,
+          value: secondaryHighlight,
+          className: "text-primary underline decoration-2 underline-offset-4",
+        });
+      }
+    }
+  }
+  if (matches.length === 0) return <>{text}</>;
+
+  matches.sort((a, b) => a.start - b.start);
+  const nodes: ReactNode[] = [];
+  let cursor = 0;
+  matches.forEach((m, i) => {
+    if (m.start > cursor) nodes.push(<span key={`t-${i}`}>{text.slice(cursor, m.start)}</span>);
+    nodes.push(
+      <span key={`h-${i}`} className={m.className}>
+        {m.value}
+      </span>,
+    );
+    cursor = m.end;
+  });
+  if (cursor < text.length) nodes.push(<span key="tail">{text.slice(cursor)}</span>);
+  return <>{nodes}</>;
 }
 
 function FornecedorImage({ imagem, numero }: { imagem?: string; numero: number }) {
@@ -370,6 +409,7 @@ export default function Oferta5Fornecedores() {
                 <Highlighted
                   text={sp.headlineTitle || DEFAULT.headlineTitle}
                   highlight={sp.headlineHighlight ?? DEFAULT.headlineHighlight}
+                  secondaryHighlight="não embola"
                 />
               </h1>
               <p className="animate-fade-up-delay-2 mx-auto max-w-xl text-lg leading-relaxed text-foreground">
