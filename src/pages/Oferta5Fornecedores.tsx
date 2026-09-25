@@ -39,6 +39,41 @@ function readPersonalization(slug: string): Personalization {
   }
 }
 
+// Teste A/B (2026-09-25): braço "direto" manda o clique do anúncio pra cá em
+// vez de passar pelo quiz — o anúncio desse braço usa parâmetro de URL
+// dinâmico com "&direct=1" (configurado no Gerenciador de Anúncios). Nesse
+// caso, ninguém gravou fbclid/UTM no localStorage ainda (quem faz isso hoje é
+// o Quiz.tsx), então essa página precisa capturar direto da própria URL —
+// mesma lógica de captureTracking() do Quiz.tsx, deliberadamente duplicada
+// aqui em vez de importada, pra não mexer em nada do quiz.
+function isDirectEntryUrl(): boolean {
+  return new URLSearchParams(window.location.search).get("direct") === "1";
+}
+
+function captureDirectEntryTracking(isDirectEntry: boolean): void {
+  if (!isDirectEntry) return;
+  const params = new URLSearchParams(window.location.search);
+
+  const fbclid = params.get("fbclid");
+  const utmSource = params.get("utm_source");
+  const utmMedium = params.get("utm_medium");
+  const utmCampaign = params.get("utm_campaign");
+  const utmContent = params.get("utm_content");
+  const utmTerm = params.get("utm_term");
+
+  try {
+    if (fbclid) localStorage.setItem("fbclid", fbclid);
+    if (utmSource) localStorage.setItem("utm_source", utmSource);
+    if (utmMedium) localStorage.setItem("utm_medium", utmMedium);
+    if (utmCampaign) localStorage.setItem("utm_campaign", utmCampaign);
+    if (utmContent) localStorage.setItem("utm_content", utmContent);
+    if (utmTerm) localStorage.setItem("utm_term", utmTerm);
+  } catch {
+    // localStorage indisponível (modo privado etc) — appendFbclid cai pro
+    // fallback sem fbclid, checkout ainda funciona, só perde a atribuição.
+  }
+}
+
 // Gravado pelo Quiz.tsx no localStorage (mesma origem, sobrevive ao
 // redirecionamento pra cá) — colado na URL de checkout pra o pixel nativo da
 // Greenn (configurado em 2026-09-20) conseguir montar o _fbc de verdade e
@@ -222,9 +257,13 @@ export default function Oferta5Fornecedores() {
   // Lida uma vez, na montagem — gravado pelo quiz (Quiz.tsx) no navegador
   // dela antes de redirecionar pra cá, não vem de API nem de query string.
   const [personalization] = useState<Personalization>(() => readPersonalization(QUIZ_SLUG));
+  // Teste A/B (2026-09-25): "?direct=1" = anúncio aponta direto pra cá, sem
+  // passar pelo quiz. Lido uma vez, na montagem (não muda durante a sessão).
+  const [isDirectEntry] = useState<boolean>(() => isDirectEntryUrl());
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    captureDirectEntryTracking(isDirectEntry);
 
     fetch(`${API_URL}/quiz/${QUIZ_SLUG}`)
       .then((res) => (res.ok ? res.json() : null))
@@ -236,16 +275,19 @@ export default function Oferta5Fornecedores() {
         // quiz, mantém desligado (não inicializa com pixel nenhum).
         if (data?.fbPixelId && window.fbq) {
           window.fbq("init", data.fbPixelId);
-          // PageView removido de propósito em 2026-09-24: essa página só é
+          // PageView removido de propósito em 2026-09-24: essa página só era
           // alcançada por quem TERMINA o quiz (redirect pós-submit), então
           // disparar PageView aqui contava como "visualização de página" do
           // anúncio uma 2ª vez pra quem completa — inflava o connect rate
           // (landing_page_view/clique) da campanha, misturando com a taxa de
-          // conclusão do quiz. O PageView real agora dispara certo na entrada
-          // do funil, via CAPI em QuizService.trackProgress (backend). Se
-          // precisar reativar (ex: essa página virar a própria entrada de
-          // algum anúncio), descomentar a linha abaixo.
-          // window.fbq("track", "PageView");
+          // conclusão do quiz. O PageView real dispara certo na entrada do
+          // funil do quiz, via CAPI em QuizService.trackProgress (backend).
+          //
+          // Teste A/B (2026-09-25): no braço "direto" (?direct=1, ver
+          // captureDirectEntryTracking acima), esta página PASSA A SER a
+          // própria entrada do anúncio — aí sim precisa do PageView, senão
+          // reabrimos o mesmo bug de connect rate zerado, agora nesse braço.
+          if (isDirectEntry) window.fbq("track", "PageView");
           window.fbq("track", "ViewContent");
         }
       })
@@ -254,7 +296,7 @@ export default function Oferta5Fornecedores() {
         setSalesPage(null);
       })
       .finally(() => setLoadingCheckout(false));
-  }, []);
+  }, [isDirectEntry]);
 
   function handleBuyClick() {
     if (window.fbq) window.fbq("track", "InitiateCheckout");
@@ -290,7 +332,14 @@ export default function Oferta5Fornecedores() {
       : sp.valorRodape || DEFAULT.valorRodape;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
+    <div
+      className={`relative min-h-screen overflow-hidden bg-background ${isDirectEntry ? "theme-gold" : ""}`}
+    >
+      {/* Teste A/B (2026-09-25): no braço "direto" a classe "theme-gold"
+          troca as variáveis de cor (--primary, --accent, --border, etc) pra
+          a mesma paleta dourada da RemarketingFornecedores.tsx — ver
+          index.css. Nenhuma classe do JSX abaixo muda; tudo que usa
+          bg-primary/text-accent/border-border já reage à variável. */}
       {/* Fita de urgência — mesmo padrão do ticker da Index.tsx */}
       <div className="relative z-50 w-full overflow-hidden bg-yellow-400 py-2">
         <div className="flex animate-marquee whitespace-nowrap">

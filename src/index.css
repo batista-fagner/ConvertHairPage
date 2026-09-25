@@ -94,6 +94,33 @@
   }
 }
 
+/* Teste A/B (2026-09-25): tema dourado do braço "direto" da
+   Oferta5Fornecedores.tsx (?direct=1) — mesma paleta já usada na
+   RemarketingFornecedores.tsx (fundo quase-preto + dourado), aplicada
+   sobrescrevendo as variáveis do shadcn só dentro de ".theme-gold". Não
+   muda o tema padrão (roxo/verde) do resto do site nem de quem vem do quiz. */
+.theme-gold {
+  --background: 37 45% 4%;
+  --foreground: 210 40% 96%;
+
+  --card: 34 30% 9%;
+  --card-foreground: 210 40% 96%;
+
+  --primary: 43 65% 52%;
+  --primary-foreground: 27 65% 9%;
+
+  --accent: 49 79% 79%;
+  --accent-foreground: 27 65% 9%;
+
+  --muted: 34 20% 14%;
+  --muted-foreground: 40 15% 62%;
+
+  --border: 40 30% 22%;
+}
+.theme-gold .gradient-text {
+  background-image: linear-gradient(135deg, #f4e5a1, #d4af37 45%, #b8860b 75%, #f4e5a1);
+}
+
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
