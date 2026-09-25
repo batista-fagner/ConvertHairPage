@@ -413,7 +413,10 @@ export default function Oferta5Fornecedores() {
                 />
               </h1>
               <p className="animate-fade-up-delay-2 mx-auto max-w-xl text-lg leading-relaxed text-foreground">
-                {sp.headlineSubtitle || DEFAULT.headlineSubtitle}
+                <Highlighted
+                  text={sp.headlineSubtitle || DEFAULT.headlineSubtitle}
+                  secondaryHighlight="melhores preços de tabela"
+                />
               </p>
 
               <a
