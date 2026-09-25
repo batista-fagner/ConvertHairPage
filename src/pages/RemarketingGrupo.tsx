@@ -153,7 +153,7 @@ export default function RemarketingGrupo() {
               </div>
               <h1 className="mb-6 text-3xl font-bold leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl text-balance">
                 Receba agora os <span className="gradient-gold">5 fornecedores validados</span>: cabelo 100% humano,
-                sem mistura, sem golpe.
+                sem mistura, não embola e sem golpe.
               </h1>
               <p className="mx-auto max-w-xl text-lg leading-relaxed text-white/70">
                 Fornecedor errado é prejuízo garantido. Fornecedor certo é risco zero — cabelo de verdade, margem boa
