@@ -23,9 +23,9 @@ export interface CleanQuestion {
   question: string;
   subtitle?: string;
   type?: "choice" | "phone" | "contact";
-  // goesToLowTicket: quem escolhe sai do quiz pra página de oferta low ticket
-  // (só se lowTicketPage.enabled).
-  options: { id: string; label: string; goesToLowTicket?: boolean }[];
+  // action: 'lowTicket' sai pra oferta (só se lowTicketPage.enabled); 'end' encerra
+  // com a página de agradecimento. goesToLowTicket é o formato antigo de 'lowTicket'.
+  options: { id: string; label: string; action?: "continue" | "lowTicket" | "end"; goesToLowTicket?: boolean }[];
   fields?: CleanField[];
 }
 
@@ -310,7 +310,10 @@ export default function CleanQuiz({
 
   function pick(optionId: string) {
     const picked = q.options.find((o) => o.id === optionId);
-    if (picked?.goesToLowTicket && quiz.lowTicketPage?.enabled) {
+    const action = picked?.action ?? (picked?.goesToLowTicket ? "lowTicket" : "continue");
+    const exitPath =
+      action === "end" ? "agradecimento" : action === "lowTicket" && quiz.lowTicketPage?.enabled ? "oferta" : null;
+    if (exitPath) {
       setChoices({ ...choices, [q.id]: optionId });
       sendProgress(index, q.id, optionId);
       finishedRef.current = true;
@@ -320,7 +323,7 @@ export default function CleanQuiz({
         return;
       }
       setTimeout(() => {
-        window.location.href = `/q/${quiz.slug}/oferta`;
+        window.location.href = `/q/${quiz.slug}/${exitPath}`;
       }, 280);
       return;
     }
