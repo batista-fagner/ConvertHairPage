@@ -23,9 +23,9 @@ export interface CleanQuestion {
   question: string;
   subtitle?: string;
   type?: "choice" | "phone" | "contact";
-  // redirectUrl: opção de "desvio" — ao escolher, a pessoa sai do quiz pra esse
-  // link (sem pedir contato, sem submit, sem evento MQL/QuizCompleto).
-  options: { id: string; label: string; redirectUrl?: string }[];
+  // goesToLowTicket: quem escolhe sai do quiz pra página de oferta low ticket
+  // (só se lowTicketPage.enabled).
+  options: { id: string; label: string; goesToLowTicket?: boolean }[];
   fields?: CleanField[];
 }
 
@@ -310,16 +310,18 @@ export default function CleanQuiz({
 
   function pick(optionId: string) {
     const picked = q.options.find((o) => o.id === optionId);
-    if (picked?.redirectUrl?.trim()) {
+    if (picked?.goesToLowTicket && quiz.lowTicketPage?.enabled) {
       setChoices({ ...choices, [q.id]: optionId });
       sendProgress(index, q.id, optionId);
+      finishedRef.current = true;
+      setSubmitting(true);
       if (isPreview) {
         setTimeout(restart, 800);
         return;
       }
-      finishedRef.current = true;
-      setSubmitting(true);
-      setTimeout(() => { window.location.href = picked.redirectUrl!.trim(); }, 280);
+      setTimeout(() => {
+        window.location.href = `/q/${quiz.slug}/oferta`;
+      }, 280);
       return;
     }
     const nextChoices = { ...choices, [q.id]: optionId };
