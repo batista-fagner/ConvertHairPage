@@ -170,7 +170,7 @@ function FieldInput({
           error ? "border-red-400 bg-red-50" : "border-transparent bg-neutral-200/70 focus-within:border-[#D8B25E]"
         }`}
       >
-        {prefix && <span className="pl-4 text-neutral-500 text-[15px] select-none">{prefix}</span>}
+        {prefix && <span className="pl-4 text-neutral-500 text-[15px] select-none whitespace-nowrap shrink-0">{prefix}</span>}
         <input
           id={`f-${field.id}`}
           autoFocus={autoFocus}
@@ -205,6 +205,9 @@ export default function CleanQuiz({
   onRestart?: () => void;
 }) {
   useFonts();
+  useEffect(() => {
+    if (quiz.presentation.title) document.title = quiz.presentation.title;
+  }, [quiz.presentation.title]);
   const [index, setIndex] = useState(0);
   const [choices, setChoices] = useState<Record<string, string>>({});
   const [values, setValues] = useState<Record<string, Record<string, string>>>({});
@@ -420,7 +423,7 @@ export default function CleanQuiz({
           )}
         </section>
 
-        <p className="text-center text-xs text-neutral-500 mt-auto">{quiz.presentation.footerNote || DEFAULT_FOOTER}</p>
+        <p className="text-center text-xs text-neutral-500 pt-2">{quiz.presentation.footerNote || DEFAULT_FOOTER}</p>
       </div>
     </div>
   );
