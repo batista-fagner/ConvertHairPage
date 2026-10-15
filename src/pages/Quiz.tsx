@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import CleanQuiz, { type CleanQuizData } from "./CleanQuiz";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
 const DEFAULT_WA_URL = import.meta.env.VITE_WA_URL || "https://chat.whatsapp.com/";
@@ -66,6 +67,8 @@ interface QuizData {
   // Pixel próprio da campanha (opcional) — sem fbAccessToken aqui, esse fica
   // só no backend (é segredo do CAPI, nunca sai pro browser).
   fbPixelId?: string | null;
+  // 'clean' = template de fundo branco (CleanQuiz.tsx); vazio/'classic' = este layout.
+  template?: "classic" | "clean" | null;
   presentation: QuizPresentation;
   questions: QuizQuestion[];
   finalStep: QuizFinalStep;
@@ -282,7 +285,7 @@ export default function Quiz() {
 
   // Auto-redirect direto pro grupo se a pessoa não interagir na apresentação.
   useEffect(() => {
-    if (step.kind !== "presentation") return;
+    if (step.kind !== "presentation" || quiz?.template === "clean") return;
     const seconds = quiz?.presentation.autoRedirectSeconds;
     if (!seconds) return;
     setCountdown(seconds);
@@ -403,6 +406,10 @@ export default function Quiz() {
         </div>
       </PhoneFrame>
     );
+  }
+
+  if (quiz.template === "clean") {
+    return <CleanQuiz quiz={quiz as unknown as CleanQuizData} isPreview={isPreview} tracking={tracking} />;
   }
 
   const totalSteps = quiz.questions.length + 2; // presentação + perguntas + final
