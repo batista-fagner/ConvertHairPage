@@ -9,6 +9,8 @@ const Redirect = lazy(() => import("./pages/Redirect.tsx"));
 const Index = lazy(() => import("./pages/Index.tsx"));
 const Result = lazy(() => import("./pages/Result.tsx"));
 const Quiz = lazy(() => import("./pages/Quiz.tsx"));
+const QuizThankYou = lazy(() => import("./pages/QuizThankYou.tsx"));
+const QuizLowTicket = lazy(() => import("./pages/QuizLowTicket.tsx"));
 const Oferta5Fornecedores = lazy(() => import("./pages/Oferta5Fornecedores.tsx"));
 const RemarketingFornecedores = lazy(() => import("./pages/RemarketingFornecedores.tsx"));
 const RemarketingGrupo = lazy(() => import("./pages/RemarketingGrupo.tsx"));
@@ -26,6 +28,8 @@ const App = () => (
         <Route path="/lp" element={<Index />} />
         <Route path="/resultado" element={<Result />} />
         <Route path="/q/:slug" element={<Quiz />} />
+        <Route path="/q/:slug/obrigado" element={<QuizThankYou />} />
+        <Route path="/q/:slug/oferta" element={<QuizLowTicket />} />
         <Route path="/oferta/5-fornecedores" element={<Oferta5Fornecedores />} />
         <Route path="/remarketing/5-fornecedores" element={<RemarketingFornecedores />} />
         <Route path="/remarketing/grupo-5-fornecedores" element={<RemarketingGrupo />} />

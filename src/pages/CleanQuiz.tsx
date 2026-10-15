@@ -23,7 +23,9 @@ export interface CleanQuestion {
   question: string;
   subtitle?: string;
   type?: "choice" | "phone" | "contact";
-  options: { id: string; label: string }[];
+  // redirectUrl: opção de "desvio" — ao escolher, a pessoa sai do quiz pra esse
+  // link (sem pedir contato, sem submit, sem evento MQL/QuizCompleto).
+  options: { id: string; label: string; redirectUrl?: string }[];
   fields?: CleanField[];
 }
 
@@ -33,6 +35,8 @@ export interface CleanQuizData {
   presentation: { title?: string; titleHighlight?: string; subtitleBox?: string; footerNote?: string };
   questions: CleanQuestion[];
   finalStep: { buttonLabel?: string };
+  thankYouPage?: { enabled?: boolean } | null;
+  lowTicketPage?: { enabled?: boolean } | null;
 }
 
 interface Tracking {
@@ -85,7 +89,7 @@ function validate(field: CleanField, value: string): string | null {
   return null;
 }
 
-function useFonts() {
+export function useFonts() {
   useEffect(() => {
     const id = "clean-quiz-fonts";
     if (document.getElementById(id)) return;
@@ -249,15 +253,8 @@ export default function CleanQuiz({
     onRestart?.();
   }
 
-  async function finish(finalValues = values, finalChoices = choices) {
-    if (finishedRef.current) return;
-    finishedRef.current = true;
-    setSubmitting(true);
-    if (isPreview) {
-      setTimeout(restart, 800);
-      return;
-    }
-    const answers = questions
+  function buildAnswers(finalValues: typeof values, finalChoices: typeof choices) {
+    return questions
       .map((qq) => {
         if (isInputStep(qq)) {
           const v = finalValues[qq.id] || {};
@@ -267,6 +264,31 @@ export default function CleanQuiz({
         return finalChoices[qq.id] ? { questionId: qq.id, optionId: finalChoices[qq.id] } : null;
       })
       .filter(Boolean);
+  }
+
+  // Lead parcial: assim que a pessoa passa da etapa com telefone, o CRM já
+  // cria o lead com o que ela respondeu até ali — mesmo que desista depois.
+  function sendPartialLead(finalValues: typeof values) {
+    if (isPreview) return;
+    fetch(`${API_URL}/quiz/${quiz.slug}/lead`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answers: buildAnswers(finalValues, choices), ...tracking }),
+      keepalive: true,
+    }).catch(() => {});
+  }
+
+  async function finish(finalValues = values, finalChoices = choices) {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    setSubmitting(true);
+    if (isPreview) {
+      setTimeout(restart, 800);
+      return;
+    }
+    const answers = buildAnswers(finalValues, finalChoices);
+    // Página do vídeo ligada no builder → passa por ela antes do destino final.
+    const thankYouUrl = quiz.thankYouPage?.enabled ? `/q/${quiz.slug}/obrigado` : null;
     try {
       const res = await fetch(`${API_URL}/quiz/${quiz.slug}/submit`, {
         method: "POST",
@@ -275,9 +297,9 @@ export default function CleanQuiz({
         keepalive: true,
       });
       const data = await res.json().catch(() => null);
-      window.location.href = data?.redirectUrl || redirectUrl;
+      window.location.href = thankYouUrl || data?.redirectUrl || redirectUrl;
     } catch {
-      window.location.href = redirectUrl;
+      window.location.href = thankYouUrl || redirectUrl;
     }
   }
 
@@ -287,6 +309,19 @@ export default function CleanQuiz({
   }
 
   function pick(optionId: string) {
+    const picked = q.options.find((o) => o.id === optionId);
+    if (picked?.redirectUrl?.trim()) {
+      setChoices({ ...choices, [q.id]: optionId });
+      sendProgress(index, q.id, optionId);
+      if (isPreview) {
+        setTimeout(restart, 800);
+        return;
+      }
+      finishedRef.current = true;
+      setSubmitting(true);
+      setTimeout(() => { window.location.href = picked.redirectUrl!.trim(); }, 280);
+      return;
+    }
     const nextChoices = { ...choices, [q.id]: optionId };
     setChoices(nextChoices);
     sendProgress(index, q.id, optionId);
@@ -301,6 +336,7 @@ export default function CleanQuiz({
     setErrors(stepErrors);
     if (Object.values(stepErrors).some(Boolean)) return;
     sendProgress(index, q.id);
+    if (fields.some((f) => f.key === "phone")) sendPartialLead(values);
     next();
   }
 
