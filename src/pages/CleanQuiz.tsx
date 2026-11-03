@@ -36,7 +36,7 @@ export interface CleanQuizData {
   questions: CleanQuestion[];
   finalStep: { buttonLabel?: string };
   thankYouPage?: { enabled?: boolean } | null;
-  lowTicketPage?: { enabled?: boolean } | null;
+  lowTicketPage?: { enabled?: boolean; redirectUrl?: string | null } | null;
 }
 
 interface Tracking {
@@ -322,8 +322,11 @@ export default function CleanQuiz({
         setTimeout(restart, 800);
         return;
       }
+      // lowTicketPage.redirectUrl: manda pra uma página já pronta (fora do
+      // construtor) em vez do rascunho interno /q/:slug/oferta.
+      const externalUrl = action === "lowTicket" ? quiz.lowTicketPage?.redirectUrl : null;
       setTimeout(() => {
-        window.location.href = `/q/${quiz.slug}/${exitPath}`;
+        window.location.href = externalUrl || `/q/${quiz.slug}/${exitPath}`;
       }, 280);
       return;
     }
