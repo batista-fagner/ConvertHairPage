@@ -352,7 +352,7 @@ export default function Oferta5Fornecedores() {
   const fromQuiz = new URLSearchParams(window.location.search).get("from") === "quiz";
   const hero = fromQuiz
     ? {
-        badge: "Uma alternativa pra você",
+        badge: "", // sem selo nessa versão
         title: "Tudo bem não ser o momento de investir R$ 1.000 em anúncio.",
         highlight: "Tudo bem",
         subtitle:
@@ -423,10 +423,12 @@ export default function Oferta5Fornecedores() {
         <section className="pb-16 pt-20">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-2xl text-center">
-              <div className="mb-6 inline-flex animate-fade-up items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-medium text-accent">
-                <CheckCircle2 className="h-3.5 w-3.5" />
-                {hero.badge}
-              </div>
+              {hero.badge && (
+                <div className="mb-6 inline-flex animate-fade-up items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-medium text-accent">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  {hero.badge}
+                </div>
+              )}
               <h1 className="animate-fade-up-delay-1 mb-6 text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-5xl text-balance">
                 <Highlighted
                   text={hero.title}
