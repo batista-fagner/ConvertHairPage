@@ -344,6 +344,25 @@ export default function Oferta5Fornecedores() {
   const checkoutUrlWithFbclid = appendFbclid(checkoutUrl);
 
   const sp = salesPage || {};
+
+  // Quem chega pelo quiz respondeu "Infelizmente não é o meu momento" pra
+  // pergunta do orçamento de anúncio (R$ 1.000/mês) — o redirectUrl do quiz
+  // leva "?from=quiz", e aí o topo da página continua essa conversa. Quem
+  // chega direto do anúncio (direct=1) ou por outro link vê o topo padrão.
+  const fromQuiz = new URLSearchParams(window.location.search).get("from") === "quiz";
+  const hero = fromQuiz
+    ? {
+        badge: "Uma alternativa pra você",
+        title: "Tudo bem não ser o momento de investir R$ 1.000 em anúncio.",
+        highlight: "Tudo bem",
+        subtitle: "Mas tem um jeito de aumentar o seu lucro ainda este mês, gastando bem menos.",
+      }
+    : {
+        badge: sp.headlineBadge || DEFAULT.headlineBadge,
+        title: sp.headlineTitle || DEFAULT.headlineTitle,
+        highlight: sp.headlineHighlight ?? DEFAULT.headlineHighlight,
+        subtitle: sp.headlineSubtitle || DEFAULT.headlineSubtitle,
+      };
   const dores = pick(sp.dores, DEFAULT.dores);
   const criterios = pick(sp.criterios, DEFAULT.criterios);
   const fornecedores = pick(sp.fornecedores, DEFAULT.fornecedores);
@@ -403,18 +422,18 @@ export default function Oferta5Fornecedores() {
             <div className="mx-auto max-w-2xl text-center">
               <div className="mb-6 inline-flex animate-fade-up items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-medium text-accent">
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                {sp.headlineBadge || DEFAULT.headlineBadge}
+                {hero.badge}
               </div>
               <h1 className="animate-fade-up-delay-1 mb-6 text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-5xl text-balance">
                 <Highlighted
-                  text={sp.headlineTitle || DEFAULT.headlineTitle}
-                  highlight={sp.headlineHighlight ?? DEFAULT.headlineHighlight}
+                  text={hero.title}
+                  highlight={hero.highlight}
                   secondaryHighlight="não embola"
                 />
               </h1>
               <p className="animate-fade-up-delay-2 mx-auto max-w-xl text-lg leading-relaxed text-foreground">
                 <Highlighted
-                  text={sp.headlineSubtitle || DEFAULT.headlineSubtitle}
+                  text={hero.subtitle}
                   secondaryHighlight="melhores preços de tabela"
                 />
               </p>
