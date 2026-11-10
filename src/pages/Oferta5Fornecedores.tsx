@@ -355,13 +355,16 @@ export default function Oferta5Fornecedores() {
         badge: "Uma alternativa pra você",
         title: "Tudo bem não ser o momento de investir R$ 1.000 em anúncio.",
         highlight: "Tudo bem",
-        subtitle: "Mas tem um jeito de aumentar o seu lucro ainda este mês, gastando bem menos.",
+        subtitle:
+          "Mas dá pra aumentar o seu lucro ainda este mês comprando cabelo direto dos 5 fornecedores que a gente já validou, por um valor que cabe no seu bolso.",
+        subtitleHighlight: "5 fornecedores que a gente já validou",
       }
     : {
         badge: sp.headlineBadge || DEFAULT.headlineBadge,
         title: sp.headlineTitle || DEFAULT.headlineTitle,
         highlight: sp.headlineHighlight ?? DEFAULT.headlineHighlight,
         subtitle: sp.headlineSubtitle || DEFAULT.headlineSubtitle,
+        subtitleHighlight: undefined as string | undefined,
       };
   const dores = pick(sp.dores, DEFAULT.dores);
   const criterios = pick(sp.criterios, DEFAULT.criterios);
@@ -434,6 +437,7 @@ export default function Oferta5Fornecedores() {
               <p className="animate-fade-up-delay-2 mx-auto max-w-xl text-lg leading-relaxed text-foreground">
                 <Highlighted
                   text={hero.subtitle}
+                  highlight={hero.subtitleHighlight}
                   secondaryHighlight="melhores preços de tabela"
                 />
               </p>
