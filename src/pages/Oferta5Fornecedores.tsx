@@ -9,6 +9,7 @@ import {
   Quote,
   ImageOff,
   Wallet,
+  Gift,
 } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
@@ -158,6 +159,14 @@ interface SalesPage {
   ctaBotaoLabel?: string;
   faq?: Faq[];
 }
+
+// Bônus (2026-11-10): +3 fornecedores além dos 5. Só o 1º já está definido;
+// os outros 2 o sócio ainda vai confirmar — até lá aparecem sem detalhe.
+const BONUS_FORNECEDORES: { titulo: string; detalhe: string }[] = [
+  { titulo: "Indiano, abaixo do preço de mercado", detalhe: "Pra comprar mais barato e aumentar sua margem em cada venda" },
+  { titulo: "Fornecedor extra", detalhe: "Revelado junto com a lista, logo após a confirmação" },
+  { titulo: "Fornecedor extra", detalhe: "Revelado junto com a lista, logo após a confirmação" },
+];
 
 const DEFAULT: Required<SalesPage> = {
   headlineBadge: "Você está qualificada",
@@ -549,6 +558,38 @@ export default function Oferta5Fornecedores() {
           </div>
         </section>
 
+        {/* ── 4b. Bônus: +3 fornecedores (logo antes do preço) ── */}
+        <section id="bonus" className="border-t border-border/40 pb-20 pt-16 scroll-mt-6">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto max-w-5xl">
+              <div className="mb-4 text-center">
+                <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-medium text-accent">
+                  <Gift className="h-3.5 w-3.5" />
+                  Bônus
+                </span>
+              </div>
+              <h3 className="mx-auto mb-3 max-w-2xl text-center text-2xl font-bold tracking-tight sm:text-3xl">
+                E mais <span className="gradient-text">3 fornecedores</span> de bônus
+              </h3>
+              <p className="mx-auto mb-8 max-w-xl text-center text-foreground">
+                Além dos 5 da lista, você leva mais 3 contatos validados, sem pagar nada a mais por isso.
+              </p>
+              <div className="grid gap-6 sm:grid-cols-3">
+                {BONUS_FORNECEDORES.map((b, idx) => (
+                  <div key={idx} className={`glass-card rounded-2xl p-6 ${idx === 0 ? "glow-primary" : ""}`}>
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15">
+                      {idx === 0 ? <Gift className="h-5 w-5 text-accent" /> : <Lock className="h-5 w-5 text-accent" />}
+                    </div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-primary">Bônus {idx + 1}</p>
+                    <h4 className="mt-1 font-semibold leading-snug">{b.titulo}</h4>
+                    <p className="mt-1 text-sm text-foreground">{b.detalhe}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── 5. Ancoragem de valor ── */}
         <section id="valor" className="border-t border-border/40 pb-20 pt-16 scroll-mt-6">
           <div className="container mx-auto px-4">
@@ -592,6 +633,11 @@ export default function Oferta5Fornecedores() {
                   </div>
                 </div>
               )}
+
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-sm font-medium text-accent">
+                <Gift className="h-4 w-4" />
+                + 3 fornecedores de bônus
+              </div>
 
               <div className="mt-2">
                 {checkoutUrlWithFbclid ? (
