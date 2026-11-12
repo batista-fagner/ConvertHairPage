@@ -451,7 +451,12 @@ export default function Oferta5Fornecedores() {
                   {hero.badge}
                 </div>
               )}
-              <h1 className="animate-fade-up-delay-1 mb-6 text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-5xl text-balance">
+              <h1
+                className={`animate-fade-up-delay-1 mb-6 font-bold leading-[1.1] tracking-tight text-balance ${
+                  // título curto da versão "sem estoque": maior no celular
+                  semEstoque ? "text-[2.6rem] sm:text-5xl lg:text-6xl" : "text-3xl sm:text-4xl lg:text-5xl"
+                }`}
+              >
                 <Highlighted
                   text={hero.title}
                   highlight={hero.highlight}
