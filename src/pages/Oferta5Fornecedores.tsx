@@ -452,9 +452,9 @@ export default function Oferta5Fornecedores() {
                 </div>
               )}
               <h1
-                className={`animate-fade-up-delay-1 mb-6 font-bold leading-[1.1] tracking-tight text-balance ${
+                className={`animate-fade-up-delay-1 mb-6 font-bold tracking-tight text-balance ${
                   // título curto da versão "sem estoque": maior no celular
-                  semEstoque ? "text-[2.6rem] sm:text-5xl lg:text-6xl" : "text-3xl sm:text-4xl lg:text-5xl"
+                  semEstoque ? "text-[2.6rem] leading-[1.1] sm:text-5xl lg:text-6xl" : "text-3xl leading-[1.15] sm:text-4xl lg:text-5xl"
                 }`}
               >
                 <Highlighted
