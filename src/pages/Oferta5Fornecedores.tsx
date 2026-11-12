@@ -388,6 +388,8 @@ export default function Oferta5Fornecedores() {
         subtitle: sp.headlineSubtitle || DEFAULT.headlineSubtitle,
         subtitleHighlight: undefined as string | undefined,
       };
+  // Versão "sem estoque" fala em 8 (5 da lista + 3 de bônus); as outras seguem o texto do Quiz Builder.
+  const ctaLabel = semEstoque ? "Quero os 8 fornecedores agora" : sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel;
   const dores = pick(sp.dores, DEFAULT.dores);
   const criterios = pick(sp.criterios, DEFAULT.criterios);
   const fornecedores = pick(sp.fornecedores, DEFAULT.fornecedores);
@@ -475,7 +477,7 @@ export default function Oferta5Fornecedores() {
                 href="#valor"
                 className="group mt-8 inline-flex animate-cta-pulse items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
               >
-                {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
+                {ctaLabel}
                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </a>
 
@@ -568,7 +570,7 @@ export default function Oferta5Fornecedores() {
                   href="#valor"
                   className="group inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
                 >
-                  {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
+                  {ctaLabel}
                   <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </a>
               </div>
@@ -664,7 +666,7 @@ export default function Oferta5Fornecedores() {
                     onClick={handleBuyClick}
                     className="group inline-flex animate-cta-pulse items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
                   >
-                    {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
+                    {ctaLabel}
                     <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                   </a>
                 ) : (
@@ -748,7 +750,7 @@ export default function Oferta5Fornecedores() {
                 href="#valor"
                 className="group inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:shadow-lg hover:shadow-primary/25"
               >
-                {sp.ctaBotaoLabel || DEFAULT.ctaBotaoLabel}
+                {ctaLabel}
                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </a>
               <p className="mt-4 text-xs text-foreground">🔒 Pagamento seguro · Acesso liberado na hora</p>
