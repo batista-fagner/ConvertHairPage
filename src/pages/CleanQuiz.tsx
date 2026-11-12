@@ -324,7 +324,25 @@ export default function CleanQuiz({
       }
       // lowTicketPage.redirectUrl: manda pra uma página já pronta (fora do
       // construtor) em vez do rascunho interno /q/:slug/oferta.
-      const externalUrl = action === "lowTicket" ? quiz.lowTicketPage?.redirectUrl : null;
+      let externalUrl = action === "lowTicket" ? quiz.lowTicketPage?.redirectUrl : null;
+      // Leva junto o motivo (texto da pergunta que mandou pra oferta), pra a
+      // página continuar a conversa certa — ex.: "estoque" vs. orçamento de anúncio.
+      if (externalUrl) {
+        try {
+          const u = new URL(externalUrl, window.location.origin);
+          const motivo = q.question
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "")
+            .slice(0, 80);
+          if (motivo) u.searchParams.set("motivo", motivo);
+          externalUrl = u.toString();
+        } catch {
+          /* URL inválida: segue sem o motivo */
+        }
+      }
       setTimeout(() => {
         window.location.href = externalUrl || `/q/${quiz.slug}/${exitPath}`;
       }, 280);

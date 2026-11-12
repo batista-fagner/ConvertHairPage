@@ -358,8 +358,21 @@ export default function Oferta5Fornecedores() {
   // pergunta do orçamento de anúncio (R$ 1.000/mês) — o redirectUrl do quiz
   // leva "?from=quiz", e aí o topo da página continua essa conversa. Quem
   // chega direto do anúncio (direct=1) ou por outro link vê o topo padrão.
-  const fromQuiz = new URLSearchParams(window.location.search).get("from") === "quiz";
-  const hero = fromQuiz
+  const params = new URLSearchParams(window.location.search);
+  const fromQuiz = params.get("from") === "quiz";
+  // "motivo" = pergunta do quiz que mandou pra cá (CleanQuiz). Quem disse que
+  // não tem estoque vê a tese do estoque; o resto segue com a do orçamento.
+  const semEstoque = fromQuiz && (params.get("motivo") || "").includes("estoque");
+  const hero = semEstoque
+    ? {
+        badge: "",
+        title: "Tudo bem não ter estoque agora.",
+        highlight: "Tudo bem",
+        subtitle:
+          "Mas pra dobrar o seu faturamento você vai precisar de um, porque o lucro está em comprar barato e vender caro. E pra comprar barato, você precisa do fornecedor certo. Eu tenho 8 pra te passar.",
+        subtitleHighlight: "Eu tenho 8 pra te passar.",
+      }
+    : fromQuiz
     ? {
         badge: "", // sem selo nessa versão
         title: "Tudo bem não ser o momento de investir R$ 1.000 em anúncio.",
