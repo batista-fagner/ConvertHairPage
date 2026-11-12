@@ -298,6 +298,59 @@ function FornecedorImage({ imagem, numero }: { imagem?: string; numero: number }
   );
 }
 
+// ── Rastreamento da oferta ──
+// Quem vem de um quiz (?from=quiz&quiz=<slug>) dispara os eventos no pixel do
+// quiz de ORIGEM (ex.: trafego-pago → pixel "Convert hair"), pra campanha que
+// trouxe a pessoa enxergar ViewContent/InitiateCheckout. Sem quiz de origem,
+// segue no pixel do próprio "5fornecedores". Cada evento vai pelo navegador e
+// pelo servidor (CAPI) com o mesmo eventID — o Meta deduplica.
+type OfferTracking = { slug: string; contentName: string };
+
+function readOfferTracking(): OfferTracking {
+  const params = new URLSearchParams(window.location.search);
+  const fromQuiz = params.get("from") === "quiz";
+  const motivo = params.get("motivo") || "";
+  // links antigos (sem &quiz=) só existiam no trafego-pago
+  const slug = fromQuiz ? params.get("quiz") || "trafego-pago" : QUIZ_SLUG;
+  const contentName = fromQuiz
+    ? motivo.includes("estoque") ? "sem-estoque" : "sem-orcamento"
+    : isDirectEntryUrl() ? "anuncio-direto" : "outro";
+  return { slug, contentName };
+}
+
+function readCookie(name: string): string | undefined {
+  const m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+  return m ? decodeURIComponent(m[1]) : undefined;
+}
+
+function trackOfferEvent(eventName: "ViewContent" | "InitiateCheckout", t: OfferTracking): void {
+  const eventId = `${eventName}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  if (window.fbq) window.fbq("track", eventName, { content_name: t.contentName }, { eventID: eventId });
+  let fbclid: string | undefined;
+  let clickId: string | undefined;
+  try {
+    fbclid = localStorage.getItem("fbclid") || undefined;
+    clickId = localStorage.getItem("click_id") || undefined;
+  } catch {
+    /* sem localStorage: vai sem esses dois */
+  }
+  fetch(`${API_URL}/quiz/${t.slug}/page-event`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    keepalive: true, // o clique de compra sai da página logo em seguida
+    body: JSON.stringify({
+      eventName,
+      eventId,
+      url: window.location.href,
+      contentName: t.contentName,
+      fbclid,
+      clickId,
+      fbc: readCookie("_fbc"),
+      fbp: readCookie("_fbp"),
+    }),
+  }).catch(() => {});
+}
+
 export default function Oferta5Fornecedores() {
   const [salesPage, setSalesPage] = useState<SalesPage | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
@@ -308,21 +361,32 @@ export default function Oferta5Fornecedores() {
   // Teste A/B (2026-09-25): "?direct=1" = anúncio aponta direto pra cá, sem
   // passar pelo quiz. Lido uma vez, na montagem (não muda durante a sessão).
   const [isDirectEntry] = useState<boolean>(() => isDirectEntryUrl());
+  const [tracking] = useState<OfferTracking>(() => readOfferTracking());
 
   useEffect(() => {
     window.scrollTo(0, 0);
     captureDirectEntryTracking(isDirectEntry);
 
+    // Pixel do quiz de origem (pode ser outro quiz, ver readOfferTracking).
+    const pixelSource =
+      tracking.slug === QUIZ_SLUG
+        ? null
+        : fetch(`${API_URL}/quiz/${tracking.slug}`)
+            .then((res) => (res.ok ? res.json() : null))
+            .catch(() => null);
+
     fetch(`${API_URL}/quiz/${QUIZ_SLUG}`)
       .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
+      .then(async (data) => {
         setCheckoutUrl(data?.checkoutUrl || null);
         setSalesPage(data?.salesPage || null);
+        const pixelData = pixelSource ? await pixelSource : data;
+        const pixelId = pixelData?.fbPixelId || data?.fbPixelId;
         // Pixel dedicado do quiz (ver Quiz.entity.fbPixelId) — o SDK do fbevents.js
         // já é carregado global no index.html. Sem fbPixelId configurado no
         // quiz, mantém desligado (não inicializa com pixel nenhum).
-        if (data?.fbPixelId && window.fbq) {
-          window.fbq("init", data.fbPixelId);
+        if (pixelId && window.fbq) {
+          window.fbq("init", pixelId);
           // PageView removido de propósito em 2026-09-24: essa página só era
           // alcançada por quem TERMINA o quiz (redirect pós-submit), então
           // disparar PageView aqui contava como "visualização de página" do
@@ -336,18 +400,18 @@ export default function Oferta5Fornecedores() {
           // própria entrada do anúncio — aí sim precisa do PageView, senão
           // reabrimos o mesmo bug de connect rate zerado, agora nesse braço.
           if (isDirectEntry) window.fbq("track", "PageView");
-          window.fbq("track", "ViewContent");
         }
+        trackOfferEvent("ViewContent", tracking);
       })
       .catch(() => {
         setCheckoutUrl(null);
         setSalesPage(null);
       })
       .finally(() => setLoadingCheckout(false));
-  }, [isDirectEntry]);
+  }, [isDirectEntry, tracking]);
 
   function handleBuyClick() {
-    if (window.fbq) window.fbq("track", "InitiateCheckout");
+    trackOfferEvent("InitiateCheckout", tracking);
   }
 
   const checkoutUrlWithFbclid = appendFbclid(checkoutUrl);

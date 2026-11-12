@@ -338,6 +338,8 @@ export default function CleanQuiz({
             .replace(/^-|-$/g, "")
             .slice(0, 80);
           if (motivo) u.searchParams.set("motivo", motivo);
+          // quiz de origem: a oferta dispara os eventos no pixel DESSE quiz
+          u.searchParams.set("quiz", quiz.slug);
           externalUrl = u.toString();
         } catch {
           /* URL inválida: segue sem o motivo */
