@@ -494,7 +494,7 @@ export default function Oferta5Fornecedores() {
         <div className="flex animate-marquee whitespace-nowrap">
           {Array.from({ length: 8 }).map((_, i) => (
             <span key={i} className="mx-8 text-sm font-bold tracking-wide text-gray-900">
-              🔥 ATENÇÃO: acesso aos 5 fornecedores validados disponível por tempo limitado 🔥
+              🔥 ATENÇÃO: acesso aos {semEstoque ? 8 : 5} fornecedores validados disponível por tempo limitado 🔥
             </span>
           ))}
         </div>
