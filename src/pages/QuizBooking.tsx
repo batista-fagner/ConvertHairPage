@@ -229,7 +229,12 @@ export default function QuizBooking() {
             <div className="px-4 pt-6 pb-10">
               <h2 className="text-center text-[19px] font-bold" style={{ ...fontTitle, color: NAVY }}>Selecione um Horário</h2>
               <p className="mt-1 text-center text-[13px]" style={{ color: SLATE }}>
-                Duração: {COPY.duration} · {selectedDay.slots.length === 1 ? "resta 1 horário" : `restam ${selectedDay.slots.length} horários`} neste dia
+                Duração: {COPY.duration}
+                {selectedDay.slots.length <= 3 && (
+                  <span className="font-semibold" style={{ color: PINK }}>
+                    {" · "}{selectedDay.slots.length === 1 ? "resta 1 horário" : `restam ${selectedDay.slots.length} horários`} neste dia
+                  </span>
+                )}
               </p>
 
               {error && <p role="alert" className="mt-4 rounded-lg bg-red-50 px-3 py-2.5 text-center text-[13px] font-medium text-red-700">{error}</p>}
@@ -306,9 +311,12 @@ export default function QuizBooking() {
                 <p className="mt-8 text-center text-[15px]" style={{ color: SLATE }}>Sem horários livres no momento. Vamos te chamar no WhatsApp para combinar.</p>
               ) : (
                 <>
-                  <p className="mt-2 text-center text-[13px] font-medium" style={{ color: PINK }}>
-                    {totalSlots === 1 ? "Resta 1 horário livre" : `Restam ${totalSlots} horários livres`} na agenda
-                  </p>
+                  {/* Só avisa quando a agenda está de fato apertada — número alto não cria urgência. */}
+                  {totalSlots <= 5 && (
+                    <p className="mt-2 text-center text-[13px] font-medium" style={{ color: PINK }}>
+                      {totalSlots === 1 ? "Resta 1 horário livre" : `Restam ${totalSlots} horários livres`} na agenda
+                    </p>
+                  )}
 
                   <div className="mt-6 flex items-center justify-center gap-6">
                     <button onClick={() => shiftMonth(-1)} disabled={!canGoPrev} aria-label="Mês anterior" className="w-10 h-10 flex items-center justify-center rounded-full disabled:opacity-25 hover:bg-slate-100">
