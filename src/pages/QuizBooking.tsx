@@ -258,10 +258,10 @@ export default function QuizBooking() {
                             <div className="mb-3 flex flex-col gap-2">
                               <label htmlFor="booking-name" className="text-[12px] font-medium" style={{ color: SLATE }}>Seu nome</label>
                               <input id="booking-name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name"
-                                className="rounded-lg border border-slate-300 px-3 py-3 text-[16px] focus:outline-none focus:ring-2 focus:ring-pink-300" />
+                                className="rounded-lg border border-slate-300 bg-white px-3 py-3 text-[16px] focus:outline-none focus:ring-2 focus:ring-pink-300" style={{ color: "#111827", WebkitTextFillColor: "#111827", caretColor: "#111827" }} />
                               <label htmlFor="booking-phone" className="text-[12px] font-medium" style={{ color: SLATE }}>WhatsApp com DDD</label>
                               <input id="booking-phone" value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="tel" placeholder="(11) 99999-9999"
-                                className="rounded-lg border border-slate-300 px-3 py-3 text-[16px] focus:outline-none focus:ring-2 focus:ring-pink-300" />
+                                className="rounded-lg border border-slate-300 bg-white px-3 py-3 text-[16px] focus:outline-none focus:ring-2 focus:ring-pink-300" style={{ color: "#111827", WebkitTextFillColor: "#111827", caretColor: "#111827" }} />
                             </div>
                           )}
                           <button
