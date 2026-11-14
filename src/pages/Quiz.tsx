@@ -91,6 +91,14 @@ function captureTracking() {
   const utmTerm = params.get("utm_term");
 
   if (fbclid) localStorage.setItem("fbclid", fbclid);
+  // Sem pixel no navegador nesta página, quem chega pela 1ª vez não tem o
+  // cookie _fbc. Monta o fbc no formato do Meta (fb.1.<ms do clique>.<fbclid>)
+  // no momento em que a pessoa chega do anúncio — é o que casa o Lead do CAPI
+  // com o clique. Clique novo (fbclid diferente) gera um fbc novo.
+  if (fbclid && localStorage.getItem("fbc_fbclid") !== fbclid) {
+    localStorage.setItem("fbc", `fb.1.${Date.now()}.${fbclid}`);
+    localStorage.setItem("fbc_fbclid", fbclid);
+  }
   if (utmSource) localStorage.setItem("utm_source", utmSource);
   if (utmMedium) localStorage.setItem("utm_medium", utmMedium);
   if (utmCampaign) localStorage.setItem("utm_campaign", utmCampaign);
@@ -107,7 +115,7 @@ function captureTracking() {
     utmContent: utmContent || localStorage.getItem("utm_content") || undefined,
     utmTerm: utmTerm || localStorage.getItem("utm_term") || undefined,
     fbclid: fbclid || localStorage.getItem("fbclid") || undefined,
-    fbc: getCookie("_fbc") || undefined,
+    fbc: getCookie("_fbc") || localStorage.getItem("fbc") || undefined,
     fbp: getCookie("_fbp") || undefined,
     clickId: localStorage.getItem("click_id") || undefined,
   };
