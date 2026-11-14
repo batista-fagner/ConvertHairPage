@@ -266,6 +266,13 @@ export default function CleanQuiz({
       .filter(Boolean);
   }
 
+  // A página de agendamento (/q/:slug/agendar) lê esse id pra saber quem está marcando.
+  function saveLeadId(data: { leadId?: string } | null) {
+    try {
+      if (data?.leadId) localStorage.setItem("quiz_lead_id", data.leadId);
+    } catch { /* armazenamento indisponível: a página pede nome e WhatsApp */ }
+  }
+
   // Lead parcial: assim que a pessoa passa da etapa com telefone, o CRM já
   // cria o lead com o que ela respondeu até ali — mesmo que desista depois.
   function sendPartialLead(finalValues: typeof values) {
@@ -275,7 +282,10 @@ export default function CleanQuiz({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ answers: buildAnswers(finalValues, choices), ...tracking }),
       keepalive: true,
-    }).catch(() => {});
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then(saveLeadId)
+      .catch(() => {});
   }
 
   async function finish(finalValues = values, finalChoices = choices) {
@@ -297,6 +307,7 @@ export default function CleanQuiz({
         keepalive: true,
       });
       const data = await res.json().catch(() => null);
+      saveLeadId(data);
       window.location.href = thankYouUrl || data?.redirectUrl || redirectUrl;
     } catch {
       window.location.href = thankYouUrl || redirectUrl;

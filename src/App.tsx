@@ -10,6 +10,7 @@ const Index = lazy(() => import("./pages/Index.tsx"));
 const Result = lazy(() => import("./pages/Result.tsx"));
 const Quiz = lazy(() => import("./pages/Quiz.tsx"));
 const QuizThankYou = lazy(() => import("./pages/QuizThankYou.tsx"));
+const QuizBooking = lazy(() => import("./pages/QuizBooking.tsx"));
 const QuizLowTicket = lazy(() => import("./pages/QuizLowTicket.tsx"));
 const QuizClosed = lazy(() => import("./pages/QuizClosed.tsx"));
 const Oferta5Fornecedores = lazy(() => import("./pages/Oferta5Fornecedores.tsx"));
@@ -30,6 +31,7 @@ const App = () => (
         <Route path="/resultado" element={<Result />} />
         <Route path="/q/:slug" element={<Quiz />} />
         <Route path="/q/:slug/obrigado" element={<QuizThankYou />} />
+        <Route path="/q/:slug/agendar" element={<QuizBooking />} />
         <Route path="/q/:slug/oferta" element={<QuizLowTicket />} />
         <Route path="/q/:slug/agradecimento" element={<QuizClosed />} />
         <Route path="/oferta/5-fornecedores" element={<Oferta5Fornecedores />} />
