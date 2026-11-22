@@ -308,7 +308,7 @@ export default function CleanQuiz({
     fetch(`${API_URL}/quiz/${quiz.slug}/lead`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ answers: buildAnswers(finalValues, choices), ...tracking }),
+      body: JSON.stringify({ answers: buildAnswers(finalValues, choices), ...tracking, variant: variant?.key }),
       keepalive: true,
     })
       .then((r) => (r.ok ? r.json() : null))
@@ -331,7 +331,7 @@ export default function CleanQuiz({
       const res = await fetch(`${API_URL}/quiz/${quiz.slug}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers, ...tracking }),
+        body: JSON.stringify({ answers, ...tracking, variant: variant?.key }),
         keepalive: true,
       });
       const data = await res.json().catch(() => null);

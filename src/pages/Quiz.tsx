@@ -243,9 +243,22 @@ export default function Quiz() {
         fbclid: tracking.fbclid,
         fbc: tracking.fbc,
         fbp: tracking.fbp,
+        variant: activeVariantKey(),
       }),
       keepalive: true,
     }).catch(() => {});
+  }
+
+  // Chave do título por criativo (?v=) em uso — só vale se existir no quiz.
+  function activeVariantKey(): string | undefined {
+    try {
+      const v = (new URLSearchParams(window.location.search).get("v") || "").trim().toLowerCase();
+      const list = ((quiz as unknown as { titleVariants?: { key: string; title: string }[] | null })?.titleVariants) || [];
+      const hit = v ? list.find((x) => (x.key || "").trim().toLowerCase() === v && x.title) : undefined;
+      return hit ? hit.key : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   useEffect(() => {
