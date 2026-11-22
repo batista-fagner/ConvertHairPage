@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api";
 
@@ -33,6 +33,7 @@ export interface CleanQuizData {
   slug: string;
   whatsappUrl?: string | null;
   presentation: { title?: string; titleHighlight?: string; subtitleBox?: string; footerNote?: string };
+  titleVariants?: { key: string; title: string; titleHighlight?: string; subtitleBox?: string }[] | null;
   questions: CleanQuestion[];
   finalStep: { buttonLabel?: string };
   thankYouPage?: { enabled?: boolean } | null;
@@ -198,7 +199,7 @@ function FieldInput({
 }
 
 export default function CleanQuiz({
-  quiz,
+  quiz: quizIn,
   isPreview,
   tracking,
   onRestart,
@@ -208,6 +209,32 @@ export default function CleanQuiz({
   tracking: Tracking;
   onRestart?: () => void;
 }) {
+  // Título/subtítulo por criativo: ?v=chave troca só esses campos da 1ª tela.
+  const variantKey = useMemo(() => {
+    try {
+      return (new URLSearchParams(window.location.search).get("v") || "").trim().toLowerCase();
+    } catch {
+      return "";
+    }
+  }, []);
+  const variant = variantKey
+    ? (quizIn.titleVariants || []).find((v) => (v.key || "").trim().toLowerCase() === variantKey && v.title)
+    : undefined;
+  const quiz = useMemo<CleanQuizData>(
+    () =>
+      variant
+        ? {
+            ...quizIn,
+            presentation: {
+              ...quizIn.presentation,
+              title: variant.title,
+              titleHighlight: variant.titleHighlight || "",
+              subtitleBox: variant.subtitleBox ?? "",
+            },
+          }
+        : quizIn,
+    [quizIn, variant],
+  );
   useFonts();
   useEffect(() => {
     if (quiz.presentation.title) document.title = quiz.presentation.title;
@@ -238,6 +265,7 @@ export default function CleanQuiz({
         fbclid: tracking.fbclid,
         fbc: tracking.fbc,
         fbp: tracking.fbp,
+        variant: variant ? variant.key : undefined,
       }),
       keepalive: true,
     }).catch(() => {});
